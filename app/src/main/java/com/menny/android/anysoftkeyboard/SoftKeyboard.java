@@ -17,6 +17,7 @@
 package com.menny.android.anysoftkeyboard;
 
 import android.content.ComponentName;
+import android.util.Log;
 
 import com.anysoftkeyboard.AnySoftKeyboard;
 
@@ -29,6 +30,8 @@ public class SoftKeyboard extends AnySoftKeyboard {
 
     @Override
     protected String getSettingsInputMethodId() {
+        //StackTraceElement trace = new Exception().getStackTrace();
+        Log.d("CS", Log.getStackTraceString(new Exception()));
         return new ComponentName(getApplication(), SoftKeyboard.class).flattenToShortString();
     }
 }
