@@ -26,6 +26,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
@@ -49,6 +50,7 @@ import com.anysoftkeyboard.prefs.AnimationsLevel;
 import com.anysoftkeyboard.rx.GenericOnError;
 import com.anysoftkeyboard.theme.KeyboardTheme;
 import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffect.BiAManager;
 import com.menny.android.anysoftkeyboard.R;
 
 import java.util.ArrayList;
@@ -198,6 +200,27 @@ public class AnyKeyboardView extends AnyKeyboardViewWithExtraDraw implements Inp
             mGestureTypingPathShouldBeDrawn = false;
             return super.onTouchEvent(me);
         }
+        Long tsLong = System.currentTimeMillis();
+        //Log.d("CS TS -> ", tsLong.toString());
+
+        //TestCode for BiAffect
+        Log.d("CS TS -> Pointer Count", me.getPointerCount() + " ");
+        Log.d("CS TS -> Cords", me.getX() + ","+ me.getY());
+        Log.d("CS TS -> Action", me.getAction() + " ");
+        Log.d("CS TS -> Cords", me.getX(0) + ","+ me.getY(0));
+        Log.d("CS TS -> Pressure", me.getPressure(0) + " ");
+        Log.d("CS TS -> MajorAxis", me.getTouchMajor(0) + " ");
+        Log.d("CS TS -> MinorAxis", me.getTouchMinor(0) + " ");
+        Log.d("CS TS -> Size", me.getSize(0) + " ");
+        Log.d("CS TS -> PointerID", me.getPointerId(0) + " ");
+        Log.d("CS TS -> EventTime", me.getDownTime() + " on Action " + me.getAction());
+        Log.d("CS TS -> EventTimeSys", tsLong.toString() + " on Action " + me.getAction());
+
+        try {
+            BiAManager.getInstance().recordKeyPressForce(me.getDownTime(), me.getPressure(0),me.getAction());
+        } catch (InterruptedException e) {
+            //e.printStackTrace();
+        }
 
         final int action = MotionEventCompat.getActionMasked(me);
 
@@ -276,6 +299,8 @@ public class AnyKeyboardView extends AnyKeyboardViewWithExtraDraw implements Inp
             dismissPopupKeyboard();
             return true;
         } else {
+            tsLong = System.currentTimeMillis()/1000;
+            Log.d("CS TS -> ", tsLong.toString());
             return super.onTouchEvent(me);
         }
     }

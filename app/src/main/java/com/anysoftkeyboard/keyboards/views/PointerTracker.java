@@ -18,6 +18,7 @@ package com.anysoftkeyboard.keyboards.views;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.anysoftkeyboard.api.KeyCodes;
@@ -252,6 +253,8 @@ class PointerTracker {
             }
 
             if (codeAtIndex != 0) {
+                Long tsLong = System.currentTimeMillis()/1000;
+                Log.d("CS TS -> ", tsLong.toString());
                 mListener.onPress(codeAtIndex);
                 //also notifying about first down
                 mListener.onFirstDownKey(codeAtIndex);

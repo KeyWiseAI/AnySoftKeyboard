@@ -20,6 +20,7 @@ import android.content.ComponentName;
 import android.util.Log;
 
 import com.anysoftkeyboard.AnySoftKeyboard;
+import com.menny.android.anysoftkeyboard.BiAffect.BiAManager;
 
 /*
  * Why is this class exists?
@@ -28,10 +29,12 @@ import com.anysoftkeyboard.AnySoftKeyboard;
  */
 public class SoftKeyboard extends AnySoftKeyboard {
 
+
     @Override
     protected String getSettingsInputMethodId() {
         //StackTraceElement trace = new Exception().getStackTrace();
         Log.d("CS", Log.getStackTraceString(new Exception()));
+        BiAManager.getInstance().startSession();
         return new ComponentName(getApplication(), SoftKeyboard.class).flattenToShortString();
     }
 }

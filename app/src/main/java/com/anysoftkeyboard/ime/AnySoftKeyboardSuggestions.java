@@ -10,6 +10,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -806,6 +807,7 @@ public abstract class AnySoftKeyboardSuggestions extends AnySoftKeyboardKeyboard
         mAdditionalCharacterForReverting = false;
         mJustAutoAddedWord = false;
         if (disabledUntilNextInputStart) {
+            Log.d("FROM ABORT", Log.getStackTraceString(new Exception()));
             Logger.d(TAG, "abortCorrection will abort correct forever");
             final KeyboardViewContainerView inputViewContainer = getInputViewContainer();
             if (inputViewContainer != null) {

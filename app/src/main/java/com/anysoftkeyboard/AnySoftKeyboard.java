@@ -66,6 +66,7 @@ import com.menny.android.anysoftkeyboard.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import android.util.*;
 
 /**
  * Input method implementation for QWERTY-ish keyboard.
@@ -997,6 +998,10 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
     public void onPress(int primaryCode) {
         super.onPress(primaryCode);
         InputConnection ic = getCurrentInputConnection();
+        Long tsLong = System.currentTimeMillis()/1000;
+        Log.d("CS TS -> ", tsLong.toString());
+        Log.d("CS From AnySoftKeyboard", Log.getStackTraceString(new Exception()));
+
 
         if (primaryCode == KeyCodes.SHIFT) {
             mShiftKeyState.onPress();
