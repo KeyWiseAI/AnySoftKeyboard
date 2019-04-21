@@ -1784,6 +1784,7 @@ public class AnyKeyboardViewBase extends View implements
         //CHECKSTYLE:OFF: missingswitchdefault
         Long tsLong = System.currentTimeMillis()/1000;
         Log.d("CS TS -> ", tsLong.toString());
+        Log.i("key detect", "Rchd here");
         switch (action) {
             case MotionEvent.ACTION_DOWN:
             case 0x00000005:// MotionEvent.ACTION_POINTER_DOWN:

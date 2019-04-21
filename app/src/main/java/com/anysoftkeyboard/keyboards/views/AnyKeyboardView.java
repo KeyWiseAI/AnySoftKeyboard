@@ -201,26 +201,29 @@ public class AnyKeyboardView extends AnyKeyboardViewWithExtraDraw implements Inp
             return super.onTouchEvent(me);
         }
         Long tsLong = System.currentTimeMillis();
-        //Log.d("CS TS -> ", tsLong.toString());
+        //Log.d(" -> ", tsLong.toString());
+        //Log.d("CS", Log.getStackTraceString(new Exception()));
+
+        Log.d("CS_KD_OTE", " "+ me.getAction() + " "+tsLong);
 
         //TestCode for BiAffect
-        Log.d("CS TS -> Pointer Count", me.getPointerCount() + " ");
-        Log.d("CS TS -> Cords", me.getX() + ","+ me.getY());
-        Log.d("CS TS -> Action", me.getAction() + " ");
-        Log.d("CS TS -> Cords", me.getX(0) + ","+ me.getY(0));
-        Log.d("CS TS -> Pressure", me.getPressure(0) + " ");
-        Log.d("CS TS -> MajorAxis", me.getTouchMajor(0) + " ");
-        Log.d("CS TS -> MinorAxis", me.getTouchMinor(0) + " ");
-        Log.d("CS TS -> Size", me.getSize(0) + " ");
-        Log.d("CS TS -> PointerID", me.getPointerId(0) + " ");
-        Log.d("CS TS -> EventTime", me.getDownTime() + " on Action " + me.getAction());
-        Log.d("CS TS -> EventTimeSys", tsLong.toString() + " on Action " + me.getAction());
+//        Log.d("CS_TS -> Pointer Count", me.getPointerCount() + " ");
+//        Log.d("CS_TS -> Cords", me.getX() + ","+ me.getY());
+//        Log.d("CS_TS -> RAW Cords", me.getRawX() + ","+ me.getRawY());
+//        Log.d("CS_TS -> View Cords", this.getX() + ","+ this.getY());
+//        Log.d("CS_TS -> Action", me.getAction() + " ");
+//        Log.d("CS_TS -> Cords", me.getX(0) + ","+ me.getY(0));
+//        Log.d("CS_TS -> Pressure", me.getPressure(0) + " ");
+//        Log.d("CS_TS -> MajorAxis", me.getTouchMajor(0) + " ");
+//        Log.d("CS_TS -> MinorAxis", me.getTouchMinor(0) + " ");
+//        Log.d("CS_TS -> Size", me.getSize(0) + " ");
+//        Log.d("CS_TS -> PointerID", me.getPointerId(0) + " ");
+//        Log.d("CS_TS -> EventTime", me.getDownTime() + " on Action " + me.getAction());
+//        Log.d("CS_TS -> EventTimeSys", tsLong.toString() + " on Action " + me.getAction());
+//        Log.d("CS_TS", " ");
 
-        try {
-            BiAManager.getInstance().recordKeyPressForce(me.getDownTime(), me.getPressure(0),me.getAction());
-        } catch (InterruptedException e) {
-            //e.printStackTrace();
-        }
+        //BiAManager.getInstance().recordKeyPressForce(me.getDownTime(), me.getPressure(0),me.getAction());
+        BiAManager.getInstance().addMasterEntry(me.getDownTime(), me.getEventTime(), me.getAction(), me.getPressure(), me.getX(), me.getY(), me.getTouchMajor(), me.getTouchMinor(), me.getPointerCount());
 
         final int action = MotionEventCompat.getActionMasked(me);
 
@@ -299,8 +302,6 @@ public class AnyKeyboardView extends AnyKeyboardViewWithExtraDraw implements Inp
             dismissPopupKeyboard();
             return true;
         } else {
-            tsLong = System.currentTimeMillis()/1000;
-            Log.d("CS TS -> ", tsLong.toString());
             return super.onTouchEvent(me);
         }
     }

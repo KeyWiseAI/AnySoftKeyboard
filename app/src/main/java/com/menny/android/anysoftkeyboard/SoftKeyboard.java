@@ -28,8 +28,6 @@ import com.menny.android.anysoftkeyboard.BiAffect.BiAManager;
  * and still support upgrade... so SoftKeyboard inherits from the actual class
  */
 public class SoftKeyboard extends AnySoftKeyboard {
-
-
     @Override
     protected String getSettingsInputMethodId() {
         //StackTraceElement trace = new Exception().getStackTrace();

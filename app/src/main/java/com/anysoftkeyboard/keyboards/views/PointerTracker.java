@@ -246,6 +246,8 @@ class PointerTracker {
         checkMultiTap(eventTime, keyIndex);
         if (mListener != null && isValidKeyIndex(keyIndex)) {
             AnyKey key = (AnyKey) mKeys[keyIndex];
+            //Key centre probe biaffect.
+            //print key details
             final int codeAtIndex = key.getCodeAtIndex(0, mKeyDetector.isKeyShifted(key));
 
             if (!mProxy.isAtTwoFingersState() && mListener.onGestureTypingInputStart(x, y, key, eventTime)) {

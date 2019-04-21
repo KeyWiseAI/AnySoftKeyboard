@@ -606,6 +606,8 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
     @Override
     public void onKey(int primaryCode, Key key, int multiTapIndex, int[] nearByKeyCodes, boolean fromUI) {
         super.onKey(primaryCode, key, multiTapIndex, nearByKeyCodes, fromUI);
+        Long tsLong = System.currentTimeMillis();
+        Log.d("CS_KD_OK", " "+ primaryCode+" "+tsLong);
 
         if (primaryCode > 0) {
             onNonFunctionKey(primaryCode, key, multiTapIndex, nearByKeyCodes, fromUI);
@@ -998,11 +1000,11 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
     public void onPress(int primaryCode) {
         super.onPress(primaryCode);
         InputConnection ic = getCurrentInputConnection();
-        Long tsLong = System.currentTimeMillis()/1000;
+        Log.d("KD", Log.getStackTraceString(new Exception()));
+        Long tsLong = System.currentTimeMillis();
         Log.d("CS TS -> ", tsLong.toString());
         Log.d("CS From AnySoftKeyboard", Log.getStackTraceString(new Exception()));
-
-
+        Log.d("CS_KD_OP", " "+ primaryCode+" "+tsLong);
         if (primaryCode == KeyCodes.SHIFT) {
             mShiftKeyState.onPress();
             // Toggle case on selected characters
@@ -1025,6 +1027,8 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
     public void onRelease(int primaryCode) {
         super.onRelease(primaryCode);
         InputConnection ic = getCurrentInputConnection();
+        Long tsLong = System.currentTimeMillis();
+        Log.d("CS_KD_OR", " "+ primaryCode + " "+tsLong);
         if (primaryCode == KeyCodes.SHIFT) {
             mShiftKeyState.onRelease(mMultiTapTimeout, mLongPressTimeout);
             handleShift();

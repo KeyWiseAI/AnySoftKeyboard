@@ -1,11 +1,23 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
+import android.util.Log;
+
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Semaphore;
 
-public class BiAManager implements BiADataProcessorInterface {
+public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorInterface, BiADataProcessorInterface{
 
     private BiAWorker1 myCurrentWorker1;
+
+    //Two data structures to hold the master records,
+    static final int TOUCH_BUFFER_SIZE = 20;
+    TouchDataPOJO[] t1;
+    TouchDataPOJO[] t2;
+    boolean bucket1;
+    int currentIndex;
+    Semaphore t1_Sempahore = new Semaphore(1);
+    Semaphore t2_Sempahore = new Semaphore(1);
 
     //Instead of inner static class we can also use enum
     static class FeatureLookupStruct{
@@ -25,6 +37,15 @@ public class BiAManager implements BiADataProcessorInterface {
         this.myTupleQueue = new ArrayBlockingQueue<>(10000);
         this.processingMap = new LinkedHashMap<>();
         this.finalPOJOMap = new LinkedHashMap<>();
+
+        //Initialising all the buffers
+        this.t1 = new TouchDataPOJO[TOUCH_BUFFER_SIZE];
+        this.t2 = new TouchDataPOJO[TOUCH_BUFFER_SIZE];
+        this.bucket1=true;
+        for(int i=0; i<TOUCH_BUFFER_SIZE; i++){
+            this.t1[i] = new TouchDataPOJO();
+            this.t2[i] = new TouchDataPOJO();
+        }
     }
 
     public static synchronized BiAManager getInstance()
@@ -55,5 +76,68 @@ public class BiAManager implements BiADataProcessorInterface {
     public boolean endSession(){
 
         return true;
+    }
+
+    //Touch Data calls
+    @Override
+    public boolean addMasterEntry(long eventDownTime, long eventTime, int eventAction, float pressure, float x_cord, float y_cord, float major_axis, float minor_axis, int touches){
+        TouchDataPOJO[] temp;
+        Semaphore temp_Semaphore;
+        //assigning correct buffer;
+        if(this.bucket1){
+            //t1 is supposed to be used
+            temp = this.t1;
+            temp_Semaphore = t1_Sempahore;
+        }else{
+            temp = this.t2;
+            temp_Semaphore = t2_Sempahore;
+        }
+
+        //lock the buffer, if lock fails, there is something wrong with the code
+        try {
+            temp_Semaphore.acquire();
+            temp[currentIndex].eventDownTime = eventDownTime;
+            temp[currentIndex].eventTime = eventTime;
+            temp[currentIndex].eventAction = eventAction;
+            temp[currentIndex].pressure = pressure;
+            temp[currentIndex].x_cord = x_cord;
+            temp[currentIndex].y_cord = y_cord;
+            temp[currentIndex].major_axis = major_axis;
+            temp[currentIndex].minor_axis = minor_axis;
+            temp[currentIndex].touches = touches;
+            temp[currentIndex].used = true;
+            Log.i("CS_BiAffect","---------------------------------");
+            Log.i("CS_BiAffect","Index->"+currentIndex);
+            temp[currentIndex].printYourself();
+            Log.i("CS_BiAffect","---------------------------------");
+
+        }catch(InterruptedException e){
+            Log.i("CS_BiAffect", "failed to acquire lock on semaphore");
+        }finally {
+            temp_Semaphore.release();
+            if(temp[currentIndex].used){
+                if(currentIndex == temp.length-1){
+                    Log.i("CS_BiAffect","-----------BUFFER CHANGE-------------"+this.bucket1);
+                    //We can kickoff a worker thread from here to take all the pojos and insert it into the database
+                    //We will pass the number of the last buffer being used and then expect the thread to infer from that which one
+                    //needs to be emptied
+                    Thread t = new Thread(new TouchDataWorker(this.bucket1));
+                    t.start();
+                    //Time to change the buffer and put all the things in the second from next
+                    this.currentIndex = 0;
+                    if(this.bucket1){
+                        bucket1=false;
+                    }else{
+                        bucket1=true;
+                    }
+
+
+                }else{
+                    currentIndex++;
+                }
+            }
+        }
+
+        return false;
     }
 }
