@@ -12,6 +12,9 @@ public class TouchDataPOJO{
     float y_cord;
     float major_axis;
     float minor_axis;
+    float accelerometer_x;
+    float accelerometer_y;
+    float accelerometer_z;
     int touches;
 
 
@@ -29,6 +32,9 @@ public class TouchDataPOJO{
         this.y_cord = 0.0f;
         this.major_axis=0.0f;
         this.minor_axis=0.0f;
+        this.accelerometer_x = 0.0f;
+        this.accelerometer_y = 0.0f;
+        this.accelerometer_z = 0.0f;
         this.touches=-1;
 
         return true;
@@ -49,6 +55,9 @@ public class TouchDataPOJO{
         Log.i("CS_BiAffect", "major_axis->"+this.major_axis);
         Log.i("CS_BiAffect", "minor_axis->"+this.minor_axis);
         Log.i("CS_BiAffect", "touches->"+this.touches);
+        Log.i("CS_BiAffect", "Acc_X->"+this.accelerometer_x);
+        Log.i("CS_BiAffect", "Acc_Y->"+this.accelerometer_y);
+        Log.i("CS_BiAffect", "Acc_Z->"+this.accelerometer_z);
     }
 
     //I think i will used event action and touches to check the validity of the pojo class

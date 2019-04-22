@@ -1,4 +1,7 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.util.Log;
 
 import java.util.Hashtable;
@@ -6,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
-public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorInterface, BiADataProcessorInterface{
+public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorInterface, BiADataProcessorInterface, SensorEventListener {
 
     private BiAWorker1 myCurrentWorker1;
 
@@ -18,6 +21,25 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     int currentIndex;
     Semaphore t1_Sempahore = new Semaphore(1);
     Semaphore t2_Sempahore = new Semaphore(1);
+
+    //Sensor specific data holders
+    float current_accelerometer_x;
+    float current_accelerometer_y;
+    float current_accelerometer_z;
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            current_accelerometer_x = event.values[0];
+            current_accelerometer_y = event.values[1];
+            current_accelerometer_z = event.values[2];
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 
     //Instead of inner static class we can also use enum
     static class FeatureLookupStruct{
@@ -105,6 +127,9 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             temp[currentIndex].major_axis = major_axis;
             temp[currentIndex].minor_axis = minor_axis;
             temp[currentIndex].touches = touches;
+            temp[currentIndex].accelerometer_x = current_accelerometer_x;
+            temp[currentIndex].accelerometer_y = current_accelerometer_y;
+            temp[currentIndex].accelerometer_z = current_accelerometer_z;
             temp[currentIndex].used = true;
             Log.i("CS_BiAffect","---------------------------------");
             Log.i("CS_BiAffect","Index->"+currentIndex);
