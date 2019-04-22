@@ -30,3 +30,8 @@ allprojects {
 
 apply from: "${rootDir}/gradle/emoji_generator.gradle"
 apply from: "${rootDir}/gradle/root_all_projects_ext.gradle"
+
+ext {
+    roomVersion = '1.1.1'
+    archLifecycleVersion = '1.1.1'
+}
