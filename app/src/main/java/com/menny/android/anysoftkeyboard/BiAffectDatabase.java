@@ -1,9 +1,15 @@
+package com.menny.android.anysoftkeyboard;
+
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-@Database(entities = {TouchData.class,KeyData.class}, version = 1)
+import com.menny.android.anysoftkeyboard.BiAffectDB_roomDAO.Touch_DAO;
+import com.menny.android.anysoftkeyboard.BiAffectDB_roomModel.KeyData;
+import com.menny.android.anysoftkeyboard.BiAffectDB_roomModel.TouchData;
+
+@Database(entities = {TouchData.class, KeyData.class}, version = 1,exportSchema = false)
 public abstract class BiAffectDatabase extends RoomDatabase {
 
     public abstract Touch_DAO TouchDao();

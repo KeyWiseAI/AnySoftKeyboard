@@ -10,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath 'com.github.menny:GradleVersion:0.0.3'
+        //classpath 'com.android.tools.build:gradle:3.3.0'
     }
 }
 
@@ -31,6 +32,7 @@ apply from: "${rootDir}/gradle/android_general.gradle"
 android {
     defaultConfig {
         applicationId 'com.menny.android.anysoftkeyboard'
+        minSdkVersion 14
         versionCode versionData.versionCode
         versionName versionData.versionName
 
@@ -87,7 +89,9 @@ android {
         }
     }
     sourceSets {
-        main { java.srcDirs = ['src/main/java', 'src/main/java/DBModel', 'src/main/java/DB_DAO'] }
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/java/com/menny/android/anysoftkeyboard/DAO_DB']
+        }
     }
 }
 
@@ -144,12 +148,29 @@ dependencies {
     testImplementation project(path: ':base-test')
     testImplementation 'com.github.triplet.simpleprovider:simpleprovider:1.1.0'
 
-    // Room components
-    implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
+//    // Room components
+    /*
+    * Room depends on 26.1 of support library, SupportLibrary does not promise interop between versions.
+    * hence code breaking?
+    * Trying to resolve by excluding from group
+    *  */
+    implementation("android.arch.persistence.room:runtime:$rootProject.roomVersion") {
+        exclude group: 'com.android.support'
+    }
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
-    androidTestImplementation "android.arch.persistence.room:testing:$rootProject.roomVersion"
-
-    // Lifecycle components
-    implementation "android.arch.lifecycle:extensions:$rootProject.archLifecycleVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.archLifecycleVersion"
+//     }
 }
+
+// trying to resolve the android version issues
+//configurations.all {
+//    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//        def requested = details.requested
+//        if (requested.group == 'com.android.support') {
+//            if (!requested.name.startsWith("multidex")) {
+//                details.useVersion '28.0.0'
+//            }
+//        }
+//    }
+//
+//
+
