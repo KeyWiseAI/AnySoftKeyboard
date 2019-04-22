@@ -1,8 +1,11 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.util.Log;
+
+import com.menny.android.anysoftkeyboard.AnyApplication;
 
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -83,7 +86,6 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         System.out.println("BiAffect recordKeyPressForce received for "+eventDownTime+ " For action "+ action);
         Pressure myPressure = new Pressure(FeatureLookupStruct.pressure, eventDownTime, pressure, action);
         shared_instance.myTupleQueue.put(myPressure);
-
         return true;
     }
 
@@ -135,6 +137,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             Log.i("CS_BiAffect","Index->"+currentIndex);
             temp[currentIndex].printYourself();
             Log.i("CS_BiAffect","---------------------------------");
+            //Log.i("CS_BiAffect_App_context",AnyApplication.getAppContext().toString());
 
         }catch(InterruptedException e){
             Log.i("CS_BiAffect", "failed to acquire lock on semaphore");
@@ -161,6 +164,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
                     currentIndex++;
                 }
             }
+            Log.i("CS_BiAffect_App_context",AnyApplication.getAppContext().toString());
         }
 
         return false;

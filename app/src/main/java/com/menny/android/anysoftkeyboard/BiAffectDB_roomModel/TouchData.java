@@ -7,12 +7,13 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(foreignKeys = @ForeignKey(entity = KeyData.class,
-        parentColumns = "Key_Id",
-        childColumns = "Key_Id",
-        onDelete = ForeignKey.NO_ACTION),
-        indices = {@Index("KeyID"),
-        @Index(value = {"Key_Id"})})
+//@Entity(foreignKeys = @ForeignKey(entity = KeyData.class,
+//        parentColumns = "Key_Id",
+//        childColumns =  "KeyId",
+//        onDelete = ForeignKey.NO_ACTION),
+//        indices = {@Index("KeyId"),
+//        @Index(value = {"KeyId"})})
+@Entity()
 public class TouchData {
 
     //Every field that's stored in the database needs to be either public or have a "getter" method. should not make primary key public but do not want to provide getter and setters for id.
@@ -22,7 +23,7 @@ public class TouchData {
     public int Id;
 
     @NonNull
-    @ColumnInfo(name = "Key_Id")
+    @ColumnInfo(name = "KeyId")
     public long eventDownTime;
 
     @NonNull

@@ -16,7 +16,7 @@ public abstract class BiAffectDatabase extends RoomDatabase {
 
     private static volatile BiAffectDatabase INSTANCE;
 
-    static BiAffectDatabase getDatabase(final Context context) {
+    public static BiAffectDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (BiAffectDatabase.class) {
                 if (INSTANCE == null) {

@@ -69,6 +69,11 @@ import io.reactivex.subjects.Subject;
 public class AnyApplication extends Application {
 
     private static final String TAG = "ASK_APP";
+    /**
+     * Created by Sreetama Banerjee on 4/22/2019.
+     * reason : to allow all components of project to get appcontext
+     */
+    private static Context appContext;
 
     static final String PREF_KEYS_FIRST_INSTALLED_APP_VERSION = "settings_key_first_app_version_installed";
     static final String PREF_KEYS_FIRST_INSTALLED_APP_TIME = "settings_key_first_time_app_installed";
@@ -170,7 +175,15 @@ public class AnyApplication extends Application {
         mCompositeDisposable.add(NightMode.observeNightModeState(this, R.string.settings_key_night_mode_app_theme_control, R.bool.settings_default_true)
                 .subscribe(nightMode -> AppCompatDelegate.setDefaultNightMode(nightMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO)));
         mNightModeSubject.onNext((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
+
+        /**
+         * Created by Sreetama Banerjee on 4/22/2019.
+         * reason : to allow all components of project to get appcontext
+         */
+        appContext = getApplicationContext();
     }
+
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -302,6 +315,14 @@ public class AnyApplication extends Application {
         } else {
             throw new IllegalStateException("What? expected 'context.getApplicationContext()' to be AnyApplication, but was '" + applicationContext.getClass() + "'!!");
         }
+    }
+
+    /**
+     * Created by Sreetama Banerjee on 4/22/2019.
+     * reason : to allow all components of project to get appcontext
+     */
+    public static Context getAppContext() {
+        return appContext;
     }
 
     public List<Drawable> getInitialWatermarksList() {
