@@ -20,7 +20,7 @@ apply plugin: 'net.evendanan.versiongenerator'
 def generators = [
         new net.evendanan.versiongenerator.generators.EnvBuildVersionGenerator.CircleCi(
                 1650/*adding to version. Should not ever change*/,
-                -2575-2600 /*decrementing due to minor, every minor/major bump, this should be decremented*/),
+                -2575 - 2600 /*decrementing due to minor, every minor/major bump, this should be decremented*/),
         new net.evendanan.versiongenerator.generators.StaticVersionGenerator()
 ]
 
@@ -86,6 +86,9 @@ android {
             matchingFallbacks = ['release', 'debug']
         }
     }
+    sourceSets {
+        main { java.srcDirs = ['src/main/java', 'src/main/java/DBModel', 'src/main/java/DB_DAO'] }
+    }
 }
 
 play {
@@ -104,7 +107,7 @@ if (playStoreWhatsNewFile.text.length() > 500) {
     println("Locale " + Locale.getDefault())
     println("file encoding " + CharsetToolkit.defaultSystemCharset)
     println("File contents:")
-    println("***" +  playStoreWhatsNewFile.text + "***")
+    println("***" + playStoreWhatsNewFile.text + "***")
     throw new IllegalStateException("whatsnew file can not be longer than 500 characters! Currently " + playStoreWhatsNewFile.text.length())
 }
 
