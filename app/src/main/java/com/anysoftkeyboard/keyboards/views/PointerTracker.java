@@ -243,6 +243,10 @@ class PointerTracker {
         mKeyAlreadyProcessed = false;
         mIsRepeatableKey = false;
         mKeyCodesInPathLength = -1;
+        Log.i("CS_BiAffect_K", "KeyIndex->"+getKey(keyIndex).label.toString());
+        Log.i("CS_BiAffect_K", "EventTime->"+eventTime);
+        Log.i("CS_BiAffect_K", "X->"+x);
+        Log.i("CS_BiAffect_K", "Y->"+y);
         checkMultiTap(eventTime, keyIndex);
         if (mListener != null && isValidKeyIndex(keyIndex)) {
             AnyKey key = (AnyKey) mKeys[keyIndex];

@@ -35,12 +35,14 @@ public interface BiADataProcessorInterface {
     interface DeviceDataProcessorInterface{
         //This interface is going to put the device specific data in the table, it will only happen once
         //we need to figureout how can i achieve that
+        //We will be putting in 4 values in here for now, which are android version, pixel density, screen size and phone model
     }
 
     interface SessionDataProcessorInterface{
         //This will contain the methods which are specific to record the session of the keyboard,
         //This will not be processed by any worker thread, instead it will be pushed in to db directly and the id of the current session will be
         //maintained in the BiAManager.java
+        //This will contain start session, end session and GyroScope data
     }
 
     boolean recordKeyPressForce(long eventDownTime, double pressure, int action) throws InterruptedException;

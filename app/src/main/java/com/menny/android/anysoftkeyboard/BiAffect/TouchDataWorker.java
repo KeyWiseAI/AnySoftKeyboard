@@ -1,5 +1,6 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -19,7 +20,7 @@ public class TouchDataWorker implements Runnable {
 
     @Override
     public void run() {
-        sharedInstance = BiAManager.getInstance();
+        sharedInstance = BiAManager.getInstance(null);
         TouchDataPOJO[] temp;
         Semaphore temp_Sempaphore;
         if(bucket1){
@@ -37,7 +38,9 @@ public class TouchDataWorker implements Runnable {
              * Created by Sreetama Banerjee on 4/22/2019.
              * reason : to allow all components of project to get appcontext
              */
-            Context context = AnyApplication.getAppContext();
+            //Context context = AnyApplication.getAppContext();
+            Context context = sharedInstance.mContext;
+
 
             /**
              * Created by Sreetama Banerjee on 4/22/2019.
@@ -50,22 +53,23 @@ public class TouchDataWorker implements Runnable {
              * Created by Sreetama Banerjee on 4/22/2019.
              * reason : creating instance of TouchData entity
              *///
-            TouchData touchMetrics = new TouchData();
             /**
              * Created by Sreetama Banerjee on 4/22/2019.
              * reason : creating instance of TouchData entity array
              *///
-            TouchData[] touchMetricsList=new TouchData[temp.length];
+            //TouchData[] touchMetricsList=new TouchData[temp.length];
 
 
             /**
              * Created by Sreetama Banerjee on 4/22/2019.
              * reason : implementation of pushing single rows into DB
              */
+            TouchData touchMetrics;
             for(int i=0; i<temp.length; i++) {
                 if (temp[i].used && temp[i].validatePOJO()) {
                     //Ready to be used inside the code
                     //Need to implement the method to push eveything into the db
+                    touchMetrics = new TouchData();
 
                     touchMetrics.eventDownTime = temp[i].eventDownTime;
                     touchMetrics.eventTime = temp[i].eventTime;
@@ -85,7 +89,9 @@ public class TouchDataWorker implements Runnable {
                      * reason : getting DAO instance and calling insert query
                      */
                     INSTANCE.TouchDao().insertOnlySingleTouchMetrics(touchMetrics);
+                    Log.i("CS_BiAffect","TempData"+touchMetrics.toString());
 
+                    Log.i("CS_BiAffect","TouchData"+touchMetrics.toString());
                     temp[i].markUnused();
                 }
 

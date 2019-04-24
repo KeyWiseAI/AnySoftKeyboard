@@ -3,6 +3,7 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.util.Log;
 
 import com.menny.android.anysoftkeyboard.AnyApplication;
@@ -16,6 +17,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     private BiAWorker1 myCurrentWorker1;
 
+    //Context specific holders
+    Context mContext;
     //Two data structures to hold the master records,
     static final int TOUCH_BUFFER_SIZE = 20;
     TouchDataPOJO[] t1;
@@ -24,8 +27,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     int currentIndex;
     Semaphore t1_Sempahore = new Semaphore(1);
     Semaphore t2_Sempahore = new Semaphore(1);
-
     //Sensor specific data holders
+    private SensorManager mSensorManager;
     float current_accelerometer_x;
     float current_accelerometer_y;
     float current_accelerometer_z;
@@ -57,7 +60,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     LinkedHashMap<Long, BiAPOJO> finalPOJOMap;
 
 
-    private BiAManager(){
+    private BiAManager(Context context){
+        this.mContext = context;
         //This wont contain anything as such
         this.myTupleQueue = new ArrayBlockingQueue<>(10000);
         this.processingMap = new LinkedHashMap<>();
@@ -67,17 +71,28 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         this.t1 = new TouchDataPOJO[TOUCH_BUFFER_SIZE];
         this.t2 = new TouchDataPOJO[TOUCH_BUFFER_SIZE];
         this.bucket1=true;
-        for(int i=0; i<TOUCH_BUFFER_SIZE; i++){
+        for(int i=0; i<TOUCH_BUFFER_SIZE; i++) {
             this.t1[i] = new TouchDataPOJO();
             this.t2[i] = new TouchDataPOJO();
         }
+
+        //Alright i am able to recevice the context, now what ? should i use a service which will basically do sampling ?
+        //For now lets stick to the logic and may be later we can insert it into a dedicated service which will sample the sensor data
+        this.mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+
+        //This should be done when the session starts and undone when the session ends
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 10);
+
     }
 
-    public static synchronized BiAManager getInstance()
+    public static synchronized BiAManager getInstance(Context mContext)
     {
-        if (shared_instance == null)
-            shared_instance = new BiAManager();
-
+        if(mContext!=null){
+            if (shared_instance == null)
+                shared_instance = new BiAManager(mContext);
+            //This will give in a provision to change the context may be at a later stage
+            shared_instance.mContext = mContext;
+        }
         return shared_instance;
     }
 
@@ -91,14 +106,15 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     //Session specific calls
     public boolean startSession(){
-        myCurrentWorker1 = new BiAWorker1();
-        //not sure if i can start the worker thread here
-        myCurrentWorker1.start();
+        //Entry into session table for start sesison
+        //Initialise db object
+        //Keep the starttime of the cuurent session in a local variable so that it can be used in endsession query
         return true;
     }
 
     public boolean endSession(){
-
+        //Entry into session table, for end session time
+        //Check for both the buffers if there are any used objects in the buffer, if yes, put them into db
         return true;
     }
 
@@ -164,7 +180,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
                     currentIndex++;
                 }
             }
-            Log.i("CS_BiAffect_App_context",AnyApplication.getAppContext().toString());
+            //Log.i("CS_BiAffect_App_context",AnyApplication.getAppContext().toString());
         }
 
         return false;

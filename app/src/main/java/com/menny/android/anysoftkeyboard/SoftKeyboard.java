@@ -32,7 +32,7 @@ public class SoftKeyboard extends AnySoftKeyboard {
     protected String getSettingsInputMethodId() {
         //StackTraceElement trace = new Exception().getStackTrace();
         Log.d("CS", Log.getStackTraceString(new Exception()));
-        BiAManager.getInstance().startSession();
+        BiAManager.getInstance(getApplicationContext()).startSession();
         return new ComponentName(getApplication(), SoftKeyboard.class).flattenToShortString();
     }
 }

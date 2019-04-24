@@ -223,8 +223,7 @@ public class AnyKeyboardView extends AnyKeyboardViewWithExtraDraw implements Inp
 //        Log.d("CS_TS", " ");
 
         //BiAManager.getInstance().recordKeyPressForce(me.getDownTime(), me.getPressure(0),me.getAction());
-        BiAManager.getInstance().addMasterEntry(me.getDownTime(), me.getEventTime(), me.getAction(), me.getPressure(), me.getX(), me.getY(), me.getTouchMajor(), me.getTouchMinor(), me.getPointerCount());
-
+        BiAManager.getInstance(this.getContext()).addMasterEntry(me.getDownTime(), me.getEventTime(), me.getAction(), me.getPressure(), me.getX(), me.getY(), me.getTouchMajor(), me.getTouchMinor(), me.getPointerCount());
         final int action = MotionEventCompat.getActionMasked(me);
 
         PointerTracker pointerTracker = getPointerTracker(me);

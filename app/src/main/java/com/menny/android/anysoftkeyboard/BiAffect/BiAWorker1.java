@@ -21,48 +21,52 @@ public class BiAWorker1 extends Thread{
 
     @Override
     public void run(){
-        BiAManager managerSharedInstance = BiAManager.getInstance();
-        ArrayBlockingQueue<BiAFeature> myQueueReference = managerSharedInstance.myTupleQueue;
-        LinkedHashMap<Long, BiAPOJO> myProcessingMapReference = managerSharedInstance.processingMap;
-        //Hashtable<Long, BiAPOJO> myFinalPOJOMapReference = managerSharedInstance.finalPOJOMap;
+        BiAManager managerSharedInstance = BiAManager.getInstance(null);
+        if(managerSharedInstance != null){
+            ArrayBlockingQueue<BiAFeature> myQueueReference = managerSharedInstance.myTupleQueue;
+            LinkedHashMap<Long, BiAPOJO> myProcessingMapReference = managerSharedInstance.processingMap;
+            //Hashtable<Long, BiAPOJO> myFinalPOJOMapReference = managerSharedInstance.finalPOJOMap;
 
-        BiAPOJO referenceHolder;
+            BiAPOJO referenceHolder;
 
-        while (sessionRunning){
-            Log.d("BiA Data Processing", "BiAWorker1 is running");
-            try {
-                BiAFeature currentTuple = myQueueReference.take();
+            while (sessionRunning){
+                Log.d("BiA Data Processing", "BiAWorker1 is running");
+                try {
+                    BiAFeature currentTuple = myQueueReference.take();
 
-                if(myProcessingMapReference.containsKey(currentTuple.id)){
-                    //already present in the map we dont need to create a new pojo instance
-                    System.out.println("BiAffect Pojo already present in map");
-                    referenceHolder = myProcessingMapReference.get(currentTuple.id);
-                    assert referenceHolder != null;
-                    referenceHolder.addRecord(currentTuple);
-                }else{
-                    //create pojo instance
-                    System.out.println("BiAffect Creating new pojo");
-                    referenceHolder = new BiAPOJO();
-                    referenceHolder.addRecord(currentTuple);
-                    myProcessingMapReference.put(currentTuple.id, referenceHolder);
+                    if(myProcessingMapReference.containsKey(currentTuple.id)){
+                        //already present in the map we dont need to create a new pojo instance
+                        System.out.println("BiAffect Pojo already present in map");
+                        referenceHolder = myProcessingMapReference.get(currentTuple.id);
+                        assert referenceHolder != null;
+                        referenceHolder.addRecord(currentTuple);
+                    }else{
+                        //create pojo instance
+                        System.out.println("BiAffect Creating new pojo");
+                        referenceHolder = new BiAPOJO();
+                        referenceHolder.addRecord(currentTuple);
+                        myProcessingMapReference.put(currentTuple.id, referenceHolder);
+                    }
+
+                    if(!referenceHolder.totalRecordMap.containsValue(false)){
+                        //Now this means that this pojo is ready to be pushed into second buffer
+                        System.out.println("BiAffect A pojo just finished");
+                    }
+
+                }catch (InterruptedException e) {
+                    //e.printStackTrace();
                 }
 
-                if(!referenceHolder.totalRecordMap.containsValue(false)){
-                    //Now this means that this pojo is ready to be pushed into second buffer
-                    System.out.println("BiAffect A pojo just finished");
+                try {
+                    Thread.sleep(25);//sleep for 25ms
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
                 }
-
-            }catch (InterruptedException e) {
-                //e.printStackTrace();
             }
-
-            try {
-                Thread.sleep(25);//sleep for 25ms
-            } catch (InterruptedException e) {
-                //e.printStackTrace();
-            }
+        } else{
+            Log.i("CS_BiAffect","Shared instance was null in "+this.getClass().getName())
+            ;
         }
-
     }
 
     public void endCurrentSession(){
