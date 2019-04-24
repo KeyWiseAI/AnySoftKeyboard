@@ -1,12 +1,10 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
 
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.menny.android.anysoftkeyboard.AnyApplication;
-import com.menny.android.anysoftkeyboard.BiAffectDB_roomModel.TouchData;
-import com.menny.android.anysoftkeyboard.BiAffectDatabase;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
 
 import java.util.concurrent.Semaphore;
 
@@ -46,7 +44,7 @@ public class TouchDataWorker implements Runnable {
              * Created by Sreetama Banerjee on 4/22/2019.
              * reason : getting instance of database class
              */
-            BiAffectDatabase INSTANCE=BiAffectDatabase.getDatabase(context);
+            BiAffectDBManager INSTANCE= BiAffectDBManager.getDatabase(context);
 
             //database entity instances
             /**
@@ -79,10 +77,11 @@ public class TouchDataWorker implements Runnable {
                     touchMetrics.y_cord = temp[i].y_cord;
                     touchMetrics.major_axis = temp[i].major_axis;
                     touchMetrics.minor_axis = temp[i].minor_axis;
-                    touchMetrics.accelerometer_x = temp[i].accelerometer_x;
-                    touchMetrics.accelerometer_y = temp[i].accelerometer_y;
-                    touchMetrics.accelerometer_z = temp[i].accelerometer_z;
-                    touchMetrics.touches = temp[i].touches;
+                    //accelerometer values stores seaparately
+//                    touchMetrics.accelerometer_x = temp[i].accelerometer_x;
+//                    touchMetrics.accelerometer_y = temp[i].accelerometer_y;
+//                    touchMetrics.accelerometer_z = temp[i].accelerometer_z;
+//                    touchMetrics.touches = temp[i].touches;
 
                     /**
                      * Created by Sreetama Banerjee on 4/22/2019.
@@ -142,7 +141,7 @@ public class TouchDataWorker implements Runnable {
             Log.i("CS_BiAffect","-----------BUFFER EMPTY END-------------"+this.bucket1);
 
             // just to check if data is being stored in db
-            //Log.i("CS_BiAffect_DB_data",BiAffectDatabase.getDatabase(AnyApplication.getAppContext()).TouchDao().fetchTouchDataAll().toString());
+            //Log.i("CS_BiAffect_DB_data",BiAffectDBManager.getDatabase(AnyApplication.getAppContext()).TouchDao().fetchTouchDataAll().toString());
 
         }
     }

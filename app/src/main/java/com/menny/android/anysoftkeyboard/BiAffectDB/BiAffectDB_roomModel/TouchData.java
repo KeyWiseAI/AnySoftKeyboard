@@ -1,9 +1,7 @@
-package com.menny.android.anysoftkeyboard.BiAffectDB_roomModel;
+package com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -13,7 +11,7 @@ import android.support.annotation.NonNull;
 //        onDelete = ForeignKey.NO_ACTION),
 //        indices = {@Index("KeyId"),
 //        @Index(value = {"KeyId"})})
-@Entity()
+@Entity(tableName = "TouchTypeData")
 public class TouchData {
 
     //Every field that's stored in the database needs to be either public or have a "getter" method. should not make primary key public but do not want to provide getter and setters for id.
@@ -22,12 +20,13 @@ public class TouchData {
     @ColumnInfo(name = "Id")
     public int Id;
 
+    //keydownpress rename
     @NonNull
     @ColumnInfo(name = "KeyId")
     public long eventDownTime;
 
     @NonNull
-    @ColumnInfo(name = "Key_UP_time")
+    @ColumnInfo(name = "Key_press_time")
     public long eventTime;
 
     @NonNull
@@ -54,27 +53,34 @@ public class TouchData {
     @ColumnInfo(name = "Key_toucharea_Minor_axis")
     public float minor_axis;
 
-    @NonNull
-    @ColumnInfo(name = "accelerometer_x")
-    public float accelerometer_x;
+/*
+* Commenting because in the new design, accelerometer data will sit in an independent table
+* */
+//    @NonNull
+//    @ColumnInfo(name = "accelerometer_x")
+//    public float accelerometer_x;
+//
+//    @NonNull
+//    @ColumnInfo(name = "accelerometer_y")
+//    public float accelerometer_y;
+//
+//    @NonNull
+//    @ColumnInfo(name = "accelerometer_z")
+//    public float accelerometer_z;
+//
+//    // needs to be taken out
+//    @NonNull
+//    @ColumnInfo(name = "Number_of_touches")
+//    public int touches;
 
-    @NonNull
-    @ColumnInfo(name = "accelerometer_y")
-    public float accelerometer_y;
+     public TouchData() {
+         // default constructor
+         // no setter method or initialising in constructor required as primary key is autogenarated
 
-    @NonNull
-    @ColumnInfo(name = "accelerometer_z")
-    public float accelerometer_z;
+     }
 
-    @NonNull
-    @ColumnInfo(name = "Number_of_touches")
-    public int touches;
-
-    // no setter method or initialising in constructor as primary key is autogenarated
-    public TouchData() {
-    }
-
-     // public int getId() { return Id; }
+    // to get the PK value
+    public int getId() { return Id; }
 
 
 }

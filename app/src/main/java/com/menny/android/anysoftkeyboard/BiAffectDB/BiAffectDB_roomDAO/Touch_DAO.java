@@ -1,10 +1,10 @@
-package com.menny.android.anysoftkeyboard.BiAffectDB_roomDAO;
+package com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import com.menny.android.anysoftkeyboard.BiAffectDB_roomModel.TouchData;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
 /**
  * Created by Sreetama Banerjee on 4/22/2019.
  * reason : room DAO
@@ -18,10 +18,8 @@ public interface Touch_DAO {
     @Insert
     void insertMultipleTouchMetrics (TouchData[] touchDataList);
 
-    // to test if data is being stored in DB
-    @Query("SELECT * FROM TouchData")
-    TouchData fetchTouchDataAll ();
-
-
+    //will be required to fetch X Y coords during Key data update
+    @Query("SELECT * FROM TouchTypeData WHERE  KeyId= :keyId"+" AND Key_Event_Action= :motioneventtype")
+    public TouchData[] fetchTouchData(long keyId,int motioneventtype);
 
 }
