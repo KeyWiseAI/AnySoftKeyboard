@@ -1,31 +1,43 @@
 package com.menny.android.anysoftkeyboard.BiAffectDB;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.Touch_DAO;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.KeyData;
+import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
 
-@Database(entities = {TouchData.class, KeyData.class}, version = 1,exportSchema = false)
-public abstract class BiAffectDBManager extends RoomDatabase {
+public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface{
+    /**
+     * Created by Sreetama Banerjee on 4/22/2019.
+     * reason : to allow all components of project to get appcontext
+     */
+    Context mcontext = AnyApplication.getAppContext();
 
-    public abstract Touch_DAO TouchDao();
+    private BiAffectDB DBINSTANCE;
 
-    private static volatile BiAffectDBManager INSTANCE;
+    private static BiAffectDBManager MngrInstance = null;
 
-    public static BiAffectDBManager getDatabase(final Context context) {
-        if (INSTANCE == null) {
-            synchronized (BiAffectDBManager.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            BiAffectDBManager.class, "BiAffect_database")
-                            .build();
-                }
-            }
+    public static synchronized BiAffectDBManager getInstance() {
+            if (MngrInstance == null)
+                MngrInstance = new BiAffectDBManager();
+            return MngrInstance;
         }
-        return INSTANCE;
+
+    //can put static if need be
+     private BiAffectDBManager() {
+        DBINSTANCE=BiAffectDB.getDatabase(mcontext);
+
+    }
+
+    @Override
+    public void insertTouchTypeEntry(TouchData single_entry){
+        DBINSTANCE.TouchDao().insertOnlySingleTouchMetrics(single_entry);
+    }
+    @Override
+    public void insertTouchTypeEntryBatch(TouchData[] multi_entry){
+        DBINSTANCE.TouchDao().insertMultipleTouchMetrics(multi_entry);
+    }
+    @Override
+    public TouchData[] fetchTouchDataRows(long keyId,int motioneventtype){
+        return DBINSTANCE.TouchDao().fetchTouchData(keyId,motioneventtype);
     }
 }

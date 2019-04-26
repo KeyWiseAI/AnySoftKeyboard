@@ -7,8 +7,9 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
 
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -32,6 +33,19 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     float current_accelerometer_x;
     float current_accelerometer_y;
     float current_accelerometer_z;
+
+    /**
+     * Created by Sreetama Banerjee on 4/22/2019.
+     * reason : to allow all components of project to get appcontext
+     */
+     Context contextdb = AnyApplication.getAppContext();
+
+    /**
+     * Created by Sreetama Banerjee on 4/22/2019.
+     * reason : getting instance of database manager class
+     */
+     private static BiAffectDBManager DBMngrINSTANCE;
+
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -83,6 +97,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         //This should be done when the session starts and undone when the session ends
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 10);
 
+        DBMngrINSTANCE=BiAffectDBManager.getInstance();
     }
 
     public static synchronized BiAManager getInstance(Context mContext)
@@ -184,5 +199,11 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         }
 
         return false;
+    }
+
+    //to get DB Manager instance
+    public static BiAffectDBManager getDBMngrInstance()
+    {
+        return DBMngrINSTANCE;
     }
 }

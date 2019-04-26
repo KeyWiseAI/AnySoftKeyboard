@@ -3,6 +3,7 @@ package com.menny.android.anysoftkeyboard.BiAffect;
 import android.content.Context;
 import android.util.Log;
 
+import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
 
@@ -36,15 +37,15 @@ public class TouchDataWorker implements Runnable {
              * Created by Sreetama Banerjee on 4/22/2019.
              * reason : to allow all components of project to get appcontext
              */
-            //Context context = AnyApplication.getAppContext();
-            Context context = sharedInstance.mContext;
+            Context context = AnyApplication.getAppContext();
+            //Context context = sharedInstance.mContext;
 
 
             /**
              * Created by Sreetama Banerjee on 4/22/2019.
-             * reason : getting instance of database class
+             * reason : getting instance of database manager class
              */
-            BiAffectDBManager INSTANCE= BiAffectDBManager.getDatabase(context);
+            BiAffectDBManager INSTANCE= BiAManager.getDBMngrInstance();
 
             //database entity instances
             /**
@@ -87,10 +88,7 @@ public class TouchDataWorker implements Runnable {
                      * Created by Sreetama Banerjee on 4/22/2019.
                      * reason : getting DAO instance and calling insert query
                      */
-                    INSTANCE.TouchDao().insertOnlySingleTouchMetrics(touchMetrics);
-                    Log.i("CS_BiAffect","TempData"+touchMetrics.toString());
-
-                    Log.i("CS_BiAffect","TouchData"+touchMetrics.toString());
+                    INSTANCE.insertTouchTypeEntry(touchMetrics);
                     temp[i].markUnused();
                 }
 
@@ -131,7 +129,7 @@ public class TouchDataWorker implements Runnable {
 //                 * Created by Sreetama Banerjee on 4/22/2019.
 //                 * reason : getting DAO instance and calling insert query (multiple batch insert)
 //                 */
-//                INSTANCE.TouchDao().insertMultipleTouchMetrics(touchMetricsList);
+//                INSTANCE.insertTouchTypeEntryBatch(touchMetricsList);
 
 
         }catch (InterruptedException e){
@@ -141,7 +139,7 @@ public class TouchDataWorker implements Runnable {
             Log.i("CS_BiAffect","-----------BUFFER EMPTY END-------------"+this.bucket1);
 
             // just to check if data is being stored in db
-            //Log.i("CS_BiAffect_DB_data",BiAffectDBManager.getDatabase(AnyApplication.getAppContext()).TouchDao().fetchTouchDataAll().toString());
+            //Log.i("CS_BiAffect_DB_data",BiAffectDB.getDatabase(AnyApplication.getAppContext()).TouchDao().fetchTouchDataAll().toString());
 
         }
     }
