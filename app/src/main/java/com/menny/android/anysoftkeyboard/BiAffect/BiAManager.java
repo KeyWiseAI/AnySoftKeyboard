@@ -11,6 +11,7 @@ import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.KeyData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.SessionData;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
 
 import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -43,6 +44,9 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     int currentIndexKey;
     Semaphore k1_Semaphore = new Semaphore(1);
     Semaphore k2_Semaphore = new Semaphore(1);
+
+    //Session specific data
+    long currentRunningSession;
 
 
     // DB related variables
@@ -142,20 +146,83 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     //Session specific calls
     public boolean startSession(){
-        /*Entry into session table for start sesison
-          creating Session object and adding values
-          initially adding end time= start time as end time is non null. will be later updated*/
-//
-//
-        //Keep the starttime of the cuurent session in a local variable so that it can be used in endsession query
-
+        this.currentRunningSession = System.currentTimeMillis();
+        BiAffectDBManager.getInstance().insertSessionStartTime(this.currentRunningSession);
         return true;
     }
 
     public boolean endSession(){
-        //Entry into session table, for end session time
+        //going through each buffer
+        //T1 Buffer
+        try {
+            t1_Sempahore.acquire();
+            for(TouchDataPOJO tP : t1){
+                if(tP.used){
+                    //This is supposed to be inserted into the database
+                    BiAffectDBManager.getInstance().insertTouchTypeData(tP.eventDownTime, tP.eventTime, tP.eventAction, tP.pressure, tP.x_cord, tP.y_cord, tP.major_axis, tP.minor_axis);
+                    tP.markUnused();
+                }
+            }
+        }catch (InterruptedException e){
 
-        //Check for both the buffers if there are any used objects in the buffer, if yes, put them into db
+        }finally {
+            t1_Sempahore.release();
+        }
+
+        //T2 Buffer
+        try {
+            t2_Sempahore.acquire();
+            for(TouchDataPOJO tP : t2){
+                if(tP.used){
+                    //This is supposed to be inserted into the database
+                    BiAffectDBManager.getInstance().insertTouchTypeData(tP.eventDownTime, tP.eventTime, tP.eventAction, tP.pressure, tP.x_cord, tP.y_cord, tP.major_axis, tP.minor_axis);
+                    tP.markUnused();
+                }
+            }
+        }catch (InterruptedException e){
+
+        }finally {
+            t2_Sempahore.release();
+        }
+
+        //K1 Buffer
+        try {
+            k1_Semaphore.acquire();
+            for(KeyDataPOJO kP:k1){
+                if(kP.used){
+                    //This is supposed to be inserted into the database
+                    BiAffectDBManager.getInstance().insertKeyTypeData(kP.eventDownTime, kP.keyType, kP.keyCentre_X, kP.keyCentre_Y, kP.keyWidth, kP.keyHeight);
+                    kP.markUnused();
+                }
+            }
+        }catch (InterruptedException e){
+
+        }finally {
+            k1_Semaphore.release();
+        }
+
+        //K2 Buffer
+        try {
+            k2_Semaphore.acquire();
+            for(KeyDataPOJO kP:k2){
+                if(kP.used){
+                    //This is supposed to be inserted into the database
+                    BiAffectDBManager.getInstance().insertKeyTypeData(kP.eventDownTime, kP.keyType, kP.keyCentre_X, kP.keyCentre_Y, kP.keyWidth, kP.keyHeight);
+                    kP.markUnused();
+                }
+            }
+        }catch (InterruptedException e){
+
+        }finally {
+            k2_Semaphore.release();
+        }
+
+        //Stop the accelerometer and other sensor threads
+
+        //Register sesison end time in the database
+        long sessionEndTime = System.currentTimeMillis();
+        BiAffectDBManager.getInstance().updateSessionEndTime(this.currentRunningSession,sessionEndTime);
+
         return true;
     }
 

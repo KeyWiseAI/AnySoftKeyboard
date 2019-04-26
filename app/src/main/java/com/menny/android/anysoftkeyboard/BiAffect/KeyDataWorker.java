@@ -45,8 +45,6 @@ public class KeyDataWorker implements Runnable {
 
                 }
             }
-
-
         }catch (InterruptedException e){
 
         }finally {
@@ -54,7 +52,5 @@ public class KeyDataWorker implements Runnable {
             Log.i("CS_BiAffect_K","---------KEY BUFFER EMPTY END-----------"+this.bucketk1);
 
         }
-
-
     }
 }
