@@ -29,7 +29,6 @@ public class TouchDataWorker implements Runnable {
             temp = sharedInstance.t2;
             temp_Sempaphore = sharedInstance.t2_Sempahore;
         }
-
         try {
             temp_Sempaphore.acquire();
             Log.i("CS_BiAffect","-----------BUFFER EMPTY START-------------"+this.bucket1);
@@ -46,10 +45,6 @@ public class TouchDataWorker implements Runnable {
         }finally {
             temp_Sempaphore.release();
             Log.i("CS_BiAffect","-----------BUFFER EMPTY END-------------"+this.bucket1);
-
-            // just to check if data is being stored in db
-            //Log.i("CS_BiAffect_DB_data",BiAffectDB.getDatabase(AnyApplication.getAppContext()).TouchDao().fetchTouchDataAll().toString());
-
         }
     }
 }
