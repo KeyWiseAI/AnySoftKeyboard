@@ -36,12 +36,13 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
     public void insertTouchTypeData(long eventDowntime,long eventTime,int eventAction,float pressure,float x, float y,float major_Axis,float minor_axis){
         TouchData TouchDataObj =new TouchData();
         TouchDataObj.eventDownTime=eventDowntime;
+        TouchDataObj.eventTime = eventTime;
         TouchDataObj.eventAction=eventAction;
         TouchDataObj.pressure=pressure;
         TouchDataObj.x_cord=x;
         TouchDataObj.y_cord=y;
         TouchDataObj.major_axis=major_Axis;
-        TouchDataObj.major_axis=minor_axis;
+        TouchDataObj.minor_axis=minor_axis;
 
         DBINSTANCE.TouchDataDao().insertOnlySingleTouchMetrics(TouchDataObj);
     }
