@@ -17,8 +17,8 @@ public interface BiAffectDBInterface {
 
     interface SessionDataInterface {
 
-        void insertSessionStartTime (SessionData single_entry);
-        void updateSessionEndTime(SessionData data);
+        void insertSessionStartTime (long startTime);
+        void updateSessionEndTime(long startTime,long endTime);
     }
 
     interface KeyTypeDataInterface {

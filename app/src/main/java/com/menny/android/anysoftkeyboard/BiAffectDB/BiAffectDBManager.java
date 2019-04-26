@@ -33,8 +33,17 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
     }
 
     @Override
-    public void insertTouchTypeData(long eventDowntime,long eventTime,int eventAction,float pressure,float x, float y,float major_Axis,float minor_axisy){
-        //DBINSTANCE.TouchDataDao().insertOnlySingleTouchMetrics(single_entry);
+    public void insertTouchTypeData(long eventDowntime,long eventTime,int eventAction,float pressure,float x, float y,float major_Axis,float minor_axis){
+        TouchData TouchDataObj =new TouchData();
+        TouchDataObj.eventDownTime=eventDowntime;
+        TouchDataObj.eventAction=eventAction;
+        TouchDataObj.pressure=pressure;
+        TouchDataObj.x_cord=x;
+        TouchDataObj.y_cord=y;
+        TouchDataObj.major_axis=major_Axis;
+        TouchDataObj.major_axis=minor_axis;
+
+        DBINSTANCE.TouchDataDao().insertOnlySingleTouchMetrics(TouchDataObj);
     }
 //    @Override
 //    public void insertTouchTypeEntryBatch(TouchData[] multi_entry){
@@ -46,13 +55,14 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
         return DBINSTANCE.TouchDataDao().fetchTouchData(keyId,motioneventtype);
     }
     @Override
-    public  void insertSessionStartTime (SessionData single_entry){
-        DBINSTANCE.SessionDataDao().insertSessionStartTime(single_entry);
+    public  void insertSessionStartTime (long startTime){
+        SessionData sessionDataObj =new SessionData();
+       // DBINSTANCE.SessionDataDao().insertSessionStartTime(time);
     }
 
     @Override
-    public void updateSessionEndTime(SessionData data){
-        DBINSTANCE.SessionDataDao().insertSessionStartTime(data);
+    public void updateSessionEndTime(long startTime,long endTime){
+        //DBINSTANCE.SessionDataDao().insertSessionStartTime(data);
     }
 
     @Override
