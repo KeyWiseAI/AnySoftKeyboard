@@ -33,12 +33,6 @@ public class TouchDataWorker implements Runnable {
         try {
             temp_Sempaphore.acquire();
             Log.i("CS_BiAffect","-----------BUFFER EMPTY START-------------"+this.bucket1);
-            /**
-             * Created by Sreetama Banerjee on 4/22/2019.
-             * reason : to allow all components of project to get appcontext
-             */
-            Context context = AnyApplication.getAppContext();
-            //Context context = sharedInstance.mContext;
 
 
             /**

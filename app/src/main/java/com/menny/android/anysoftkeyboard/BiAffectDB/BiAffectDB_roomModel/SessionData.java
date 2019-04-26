@@ -8,11 +8,8 @@ import android.support.annotation.NonNull;
 @Entity
 public class SessionData {
 
-    @PrimaryKey(autoGenerate = true)
-    @NonNull
-    @ColumnInfo(name = "id")
     public long id;
-
+    @PrimaryKey
     @NonNull
     @ColumnInfo(name = "Session_start_time")
     public long startTime;
