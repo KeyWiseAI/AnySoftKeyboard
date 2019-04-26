@@ -10,10 +10,13 @@ import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.Device_DA
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.KeyData_DAO;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.Session_DAO;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.Touch_DAO;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.AccelerometerData;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.DeviceData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.KeyData;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.SessionData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
 
-@Database(entities = {TouchData.class, KeyData.class}, version = 1,exportSchema = false)
+@Database(entities = {TouchData.class, KeyData.class, SessionData.class, AccelerometerData.class, DeviceData.class}, version = 1,exportSchema = false)
 public abstract class BiAffectDB extends RoomDatabase {
 
     public abstract Touch_DAO TouchDataDao();

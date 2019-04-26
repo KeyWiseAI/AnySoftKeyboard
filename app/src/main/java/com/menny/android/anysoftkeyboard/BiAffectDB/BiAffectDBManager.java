@@ -27,7 +27,7 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
         }
 
     //can put static if need be
-     private BiAffectDBManager() {
+    private BiAffectDBManager() {
         DBINSTANCE=BiAffectDB.getDatabase(mcontext);
 
     }

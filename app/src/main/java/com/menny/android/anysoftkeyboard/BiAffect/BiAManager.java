@@ -141,24 +141,19 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     }
 
     //Session specific calls
-    public boolean startSession(long sessionstarttime){
+    public boolean startSession(){
         /*Entry into session table for start sesison
           creating Session object and adding values
           initially adding end time= start time as end time is non null. will be later updated*/
-
-        sessdata.startTime=sessionstarttime;
-        sessdata.endTime=sessionstarttime;
-        DBMngrINSTANCE.insertSessionStartTime(sessdata);
-
+//
+//       
         //Keep the starttime of the cuurent session in a local variable so that it can be used in endsession query
 
         return true;
     }
 
-    public boolean endSession(long sessionendtime){
+    public boolean endSession(){
         //Entry into session table, for end session time
-        sessdata.endTime=sessionendtime;
-        DBMngrINSTANCE.updateSessionEndTime(sessdata);
 
         //Check for both the buffers if there are any used objects in the buffer, if yes, put them into db
         return true;
