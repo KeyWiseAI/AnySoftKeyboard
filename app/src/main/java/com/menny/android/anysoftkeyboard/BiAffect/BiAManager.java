@@ -9,13 +9,14 @@ import android.util.Log;
 import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.KeyData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.SessionData;
 
 import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
-public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorInterface, BiADataProcessorInterface, SensorEventListener {
+public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorInterface, BiADataProcessorInterface, SensorEventListener, BiADataProcessorInterface.KeyDataProcessorInterface {
 
     private BiAWorker1 myCurrentWorker1;
 
@@ -34,6 +35,14 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     float current_accelerometer_x;
     float current_accelerometer_y;
     float current_accelerometer_z;
+    //Key Data specific data holders
+    static final int KEY_BUFFER_SIZE = 20;
+    KeyDataPOJO[] k1;
+    KeyDataPOJO[] k2;
+    boolean bucketk1;
+    int currentIndexKey;
+    Semaphore k1_Semaphore = new Semaphore(1);
+    Semaphore k2_Semaphore = new Semaphore(1);
 
 
     // DB related variables
@@ -91,6 +100,15 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         for(int i=0; i<TOUCH_BUFFER_SIZE; i++) {
             this.t1[i] = new TouchDataPOJO();
             this.t2[i] = new TouchDataPOJO();
+        }
+
+        //Initialising keyDataBuffers
+        this.k1 = new KeyDataPOJO[KEY_BUFFER_SIZE];
+        this.k2 = new KeyDataPOJO[KEY_BUFFER_SIZE];
+        this.bucketk1=true;
+        for (int i=0; i<KEY_BUFFER_SIZE; i++){
+            this.k1[i] = new KeyDataPOJO();
+            this.k2[i] = new KeyDataPOJO();
         }
 
         //Alright i am able to recevice the context, now what ? should i use a service which will basically do sampling ?
@@ -211,6 +229,74 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             //Log.i("CS_BiAffect_App_context",AnyApplication.getAppContext().toString());
         }
 
+        return false;
+    }
+
+    //Key data specific calls
+    @Override
+    public boolean addKeyDataOnlyUpTime(long eventDownTime, int key_id, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
+        KeyDataPOJO[] temp;
+        Semaphore temp_Semaphore;
+        //assigning correct buffer;
+        if(this.bucketk1){
+            //t1 is supposed to be used
+            temp = this.k1;
+            temp_Semaphore = k1_Semaphore;
+        }else{
+            temp = this.k2;
+            temp_Semaphore = k2_Semaphore;
+        }
+        //Lock the semaphore
+        try {
+            temp_Semaphore.acquire();
+            temp[currentIndexKey].eventDownTime = eventDownTime;
+            temp[currentIndexKey].eventUpTime = 0;
+            temp[currentIndexKey].keyId = key_id;
+            temp[currentIndexKey].keyCentre_X = keyCentre_X;
+            temp[currentIndexKey].keyCentre_Y = keyCentre_Y;
+            temp[currentIndexKey].keyWidth = keyWidth;
+            temp[currentIndexKey].keyHeight = keyHeight;
+            temp[currentIndexKey].used = true;
+            Log.i("CS_BiAffect_K","---------------------------------");
+            Log.i("CS_BiAffect_K","Index->"+currentIndexKey);
+            temp[currentIndexKey].printYourself();
+            Log.i("CS_BiAffect_K","---------------------------------");
+
+        }catch (InterruptedException e){
+            Log.i("CS_BiAffect_K", "failed to acquire lock on semaphore");
+        }finally {
+            temp_Semaphore.release();
+            if(temp[currentIndexKey].used){
+                if(currentIndexKey == KEY_BUFFER_SIZE-1){
+                    //Time to switch the key buffer
+                    Log.i("CS_BiAffect_K","-----------KEY BUFFER CHANGE-------------"+this.bucketk1);
+                    //We can kickoff a worker thread from here to take all the pojos and insert it into the database
+                    //We will pass the number of the last buffer being used and then expect the thread to infer from that which one
+                    //needs to be emptied
+                    Thread t = new Thread(new KeyDataWorker(this.bucketk1));
+                    t.start();
+                    //Time to change the buffer and put all the things in the second from next
+                    this.currentIndexKey = 0;
+                    if(this.bucketk1){
+                        bucketk1=false;
+                    }else{
+                        bucketk1=true;
+                    }
+                }else{
+                    currentIndexKey++;
+                }
+            }
+
+        }
+        //insert data into unsed pojo
+        //unlock semaphore
+        //deduce if it needs to kickoff another thread
+        //leave
+        return false;
+    }
+
+    @Override
+    public boolean updateUpTimeFor(long eventDownTime, long eventUpTime) {
         return false;
     }
 
