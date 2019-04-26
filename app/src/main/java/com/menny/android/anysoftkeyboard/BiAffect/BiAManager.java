@@ -147,7 +147,12 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     //Session specific calls
     public boolean startSession(){
         this.currentRunningSession = System.currentTimeMillis();
-        BiAffectDBManager.getInstance().insertSessionStartTime(this.currentRunningSession);
+        Thread temp = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BiAffectDBManager.getInstance().insertSessionStartTime(currentRunningSession);
+            }
+        });
         return true;
     }
 
