@@ -220,7 +220,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
                 attribute.imeOptions, attribute.inputType, restarting);
 
         super.onStartInputView(attribute, restarting);
-
+        BiAManager.getInstance(getApplicationContext()).startSession();
         if (mVoiceRecognitionTrigger != null) {
             mVoiceRecognitionTrigger.onStartInputView();
         }
@@ -233,7 +233,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
         getInputView().setKeyboardActionType(attribute.imeOptions);
 
         updateShiftStateNow();
-        BiAManager.getInstance(getApplicationContext()).startSession();
+
     }
 
     @Override

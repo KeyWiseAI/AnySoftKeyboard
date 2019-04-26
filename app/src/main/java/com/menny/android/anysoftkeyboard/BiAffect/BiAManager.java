@@ -47,6 +47,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     //Session specific data
     long currentRunningSession;
+    boolean sessionRunning;
 
 
     // DB related variables
@@ -146,127 +147,29 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     //Session specific calls
     public boolean startSession(){
+        //check once.. I dont think the event time is stored as milli sec
+        Log.i("CS_BiAffect_S","-----------Start SESSION START-------------");
+        this.sessionRunning = true;
         this.currentRunningSession = System.currentTimeMillis();
+        Log.i("CS_BiAffect_S","startTime -> "+currentRunningSession);
         Thread temp = new Thread(new Runnable() {
             @Override
             public void run() {
                 BiAffectDBManager.getInstance().insertSessionStartTime(currentRunningSession);
             }
         });
+        Log.i("CS_BiAffect_S","-----------Start SESSION End-------------");
         return true;
     }
 
     public boolean endSession(){
-        Log.i("CS_BiAffect","-----------END SESSION START-------------");
-        //going through each buffer
-        //T1 Buffer
-        try {
-            t1_Sempahore.acquire();
-            Log.i("CS_BiAffect","-----------TP1 START-------------");
-            for(TouchDataPOJO tP : t1){
-                if(tP.used){
-                    Thread temp = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //This is supposed to be inserted into the database
-                            BiAffectDBManager.getInstance().insertTouchTypeData(tP.eventDownTime, tP.eventTime, tP.eventAction, tP.pressure, tP.x_cord, tP.y_cord, tP.major_axis, tP.minor_axis);
-                            tP.markUnused();
-
-                        }
-                    });
-                    temp.start();
-
-                }
-            }
-        }catch (InterruptedException e){
-
-        }finally {
-            t1_Sempahore.release();
-        }
-
-        //T2 Buffer
-        try {
-            t2_Sempahore.acquire();
-            Log.i("CS_BiAffect","-----------TP2 START-------------");
-            for(TouchDataPOJO tP : t2){
-                if(tP.used){
-                    Thread temp = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //This is supposed to be inserted into the database
-                            BiAffectDBManager.getInstance().insertTouchTypeData(tP.eventDownTime, tP.eventTime, tP.eventAction, tP.pressure, tP.x_cord, tP.y_cord, tP.major_axis, tP.minor_axis);
-                            tP.markUnused();
-
-                        }
-                    });
-                    temp.start();
-                }
-            }
-        }catch (InterruptedException e){
-
-        }finally {
-            t2_Sempahore.release();
-        }
-
-        //K1 Buffer
-        try {
-            k1_Semaphore.acquire();
-            Log.i("CS_BiAffect","-----------KP1 START-------------");
-            for(KeyDataPOJO kP:k1){
-                if(kP.used){
-                    Thread temp  = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //This is supposed to be inserted into the database
-                            BiAffectDBManager.getInstance().insertKeyTypeData(kP.eventDownTime, kP.keyType, kP.keyCentre_X, kP.keyCentre_Y, kP.keyWidth, kP.keyHeight);
-                            kP.markUnused();
-                        }
-                    });
-                    temp.start();
-                }
-            }
-        }catch (InterruptedException e){
-
-        }finally {
-            k1_Semaphore.release();
-        }
-
-        //K2 Buffer
-        try {
-            k2_Semaphore.acquire();
-            Log.i("CS_BiAffect","-----------KP2 START-------------");
-            for(KeyDataPOJO kP:k2){
-                if(kP.used){
-                    Thread temp  = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //This is supposed to be inserted into the database
-                            BiAffectDBManager.getInstance().insertKeyTypeData(kP.eventDownTime, kP.keyType, kP.keyCentre_X, kP.keyCentre_Y, kP.keyWidth, kP.keyHeight);
-                            kP.markUnused();
-                        }
-                    });
-                    temp.start();
-                }
-            }
-        }catch (InterruptedException e){
-
-        }finally {
-            k2_Semaphore.release();
-        }
-
-        //Stop the accelerometer and other sensor threads
-
-        //Register sesison end time in the database
+        if(!this.sessionRunning) return false;
+        Log.i("CS_BiAffect_E","-----------END SESSION START-------------");
+        this.sessionRunning = false;
         long sessionEndTime = System.currentTimeMillis();
-        Thread temp  = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //This is supposed to be inserted into the database
-                BiAffectDBManager.getInstance().updateSessionEndTime(currentRunningSession,sessionEndTime);
-            }
-        });
+        Thread temp = new Thread(new Finaliser(this.currentRunningSession, sessionEndTime));
         temp.start();
-
+        Log.i("CS_BiAffect_E","-----------END SESSION END-------------");
         return true;
     }
 

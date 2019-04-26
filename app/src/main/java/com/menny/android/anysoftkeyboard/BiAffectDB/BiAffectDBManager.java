@@ -1,8 +1,12 @@
 package com.menny.android.anysoftkeyboard.BiAffectDB;
 
 import android.content.Context;
+import android.text.method.Touch;
+import android.util.Log;
 
 import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffect.TouchDataWorker;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.Touch_DAO;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.AccelerometerData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.DeviceData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.KeyData;
@@ -17,6 +21,7 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
     Context mcontext = AnyApplication.getAppContext();
 
     private static BiAffectDB DBINSTANCE;
+    private final Touch_DAO mtouchDataDao;
 
     private static BiAffectDBManager MngrInstance = null;
 
@@ -29,11 +34,13 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
     //can put static if need be
     private BiAffectDBManager() {
         DBINSTANCE=BiAffectDB.getDatabase(mcontext);
-
+        mtouchDataDao = DBINSTANCE.TouchDataDao();
     }
 
     @Override
     public void insertTouchTypeData(long eventDowntime,long eventTime,int eventAction,float pressure,float x, float y,float major_Axis,float minor_axis){
+        Log.i("CS_BiA_TP_T","Start");
+        Log.i("CS_BiA_TP_T","downTime -> "+eventDowntime);
         TouchData TouchDataObj =new TouchData();
         TouchDataObj.eventDownTime=eventDowntime;
         TouchDataObj.eventTime = eventTime;
@@ -43,8 +50,8 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
         TouchDataObj.y_cord=y;
         TouchDataObj.major_axis=major_Axis;
         TouchDataObj.minor_axis=minor_axis;
-
-        DBINSTANCE.TouchDataDao().insertOnlySingleTouchMetrics(TouchDataObj);
+        mtouchDataDao.insertOnlySingleTouchMetrics(TouchDataObj);
+        Log.i("CS_BiA_TP_T","End");
     }
 //    @Override
 //    public void insertTouchTypeEntryBatch(TouchData[] multi_entry){
@@ -57,10 +64,12 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
     }
     @Override
     public  void insertSessionStartTime (long startTime){
+        Log.i("CS_BiAffect_S_T","startTime -> "+startTime);
         SessionData sessionDataObj =new SessionData();
         sessionDataObj.startTime=startTime;
         sessionDataObj.endTime=startTime;
         DBINSTANCE.SessionDataDao().insertSessionStartTime(sessionDataObj);
+        Log.i("CS_BiAffect_S_T","Inserted in db");
     }
 
     @Override

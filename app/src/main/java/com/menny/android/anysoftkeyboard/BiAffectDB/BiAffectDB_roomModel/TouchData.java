@@ -22,11 +22,11 @@ public class TouchData {
 
     //keydownpress rename
     @NonNull
-    @ColumnInfo(name = "KeyId")
+    @ColumnInfo(name = "Key_down_time")
     public long eventDownTime;
 
     @NonNull
-    @ColumnInfo(name = "Key_press_time")
+    @ColumnInfo(name = "Key_current_time")
     public long eventTime;
 
     @NonNull
@@ -53,25 +53,6 @@ public class TouchData {
     @ColumnInfo(name = "Key_toucharea_Minor_axis")
     public float minor_axis;
 
-/*
-* Commenting because in the new design, accelerometer data will sit in an independent table
-* */
-//    @NonNull
-//    @ColumnInfo(name = "accelerometer_x")
-//    public float accelerometer_x;
-//
-//    @NonNull
-//    @ColumnInfo(name = "accelerometer_y")
-//    public float accelerometer_y;
-//
-//    @NonNull
-//    @ColumnInfo(name = "accelerometer_z")
-//    public float accelerometer_z;
-//
-//    // needs to be taken out
-//    @NonNull
-//    @ColumnInfo(name = "Number_of_touches")
-//    public int touches;
 
      public TouchData() {
          // default constructor

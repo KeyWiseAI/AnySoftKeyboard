@@ -19,7 +19,7 @@ public interface Touch_DAO {
     void insertMultipleTouchMetrics (TouchData[] touchDataList);
 
     //will be required to fetch X Y coords during Key data update
-    @Query("SELECT * FROM TouchTypeData WHERE  KeyId= :keyId"+" AND Key_Event_Action= :motioneventtype")
+    @Query("SELECT * FROM TouchTypeData WHERE  Key_down_time= :keyId"+" AND Key_Event_Action= :motioneventtype")
     public TouchData[] fetchTouchData(long keyId,int motioneventtype);
 
 }
