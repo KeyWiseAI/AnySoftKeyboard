@@ -88,6 +88,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     private BiAManager(Context context){
         this.mContext = context;
+        //This will initialise the dbManager when the constructor of BiAManager is called...
+        BiAffectDBManager.getInstance();
         //This wont contain anything as such
         this.myTupleQueue = new ArrayBlockingQueue<>(10000);
         this.processingMap = new LinkedHashMap<>();
@@ -117,8 +119,6 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
         //This should be done when the session starts and undone when the session ends
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 10);
-
-        DBMngrINSTANCE=BiAffectDBManager.getInstance();
     }
 
     public static synchronized BiAManager getInstance(Context mContext)
@@ -146,7 +146,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
           creating Session object and adding values
           initially adding end time= start time as end time is non null. will be later updated*/
 //
-//       
+//
         //Keep the starttime of the cuurent session in a local variable so that it can be used in endsession query
 
         return true;
@@ -215,16 +215,13 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
                     }else{
                         bucket1=true;
                     }
-
-
                 }else{
                     currentIndex++;
                 }
             }
             //Log.i("CS_BiAffect_App_context",AnyApplication.getAppContext().toString());
         }
-
-        return false;
+        return true;
     }
 
     //Key data specific calls
