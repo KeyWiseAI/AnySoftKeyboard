@@ -57,17 +57,29 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
     @Override
     public  void insertSessionStartTime (long startTime){
         SessionData sessionDataObj =new SessionData();
-       // DBINSTANCE.SessionDataDao().insertSessionStartTime(time);
+        sessionDataObj.startTime=startTime;
+        sessionDataObj.endTime=startTime;
+        DBINSTANCE.SessionDataDao().insertSessionStartTime(sessionDataObj);
     }
 
     @Override
     public void updateSessionEndTime(long startTime,long endTime){
-        //DBINSTANCE.SessionDataDao().insertSessionStartTime(data);
+        SessionData sessionDataObj =new SessionData();
+        sessionDataObj.startTime=startTime;
+        sessionDataObj.endTime=endTime;
+        DBINSTANCE.SessionDataDao().insertSessionStartTime(sessionDataObj);
     }
 
     @Override
     public void insertKeyTypeData (long keyId,int keytypecode,float x,float y, float width, float height){
-        //DBINSTANCE.KeyDataDAO().insertOnlySingleKeyMetrics(single_entry);
+        KeyData keyDataObj =new KeyData();
+        keyDataObj.eventDownTime=keyId;
+        keyDataObj.keyType=keytypecode;
+        keyDataObj.Key_X=x;
+        keyDataObj.Key_X=y;
+        keyDataObj.Key_width=width;
+        keyDataObj.Key_height=height;
+        DBINSTANCE.KeyDataDAO().insertOnlySingleKeyMetrics(keyDataObj);
     }
 
 //    @Override
