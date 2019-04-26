@@ -16,7 +16,7 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
      */
     Context mcontext = AnyApplication.getAppContext();
 
-    private BiAffectDB DBINSTANCE;
+    private static BiAffectDB DBINSTANCE;
 
     private static BiAffectDBManager MngrInstance = null;
 
