@@ -43,6 +43,7 @@ import com.anysoftkeyboard.keyboards.views.OnKeyboardActionListener;
 import com.anysoftkeyboard.ui.dev.DeveloperUtils;
 import com.anysoftkeyboard.utils.ModifierKeyState;
 import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffect.BiAManager;
 import com.menny.android.anysoftkeyboard.BuildConfig;
 import com.menny.android.anysoftkeyboard.R;
 
@@ -317,6 +318,7 @@ public abstract class AnySoftKeyboardBase extends InputMethodService implements 
         while (handleCloseRequest()) {
             Logger.i(TAG, "Still have stuff to close. Trying handleCloseRequest again.");
         }
+        BiAManager.getInstance(getApplicationContext()).endSession();
         super.hideWindow();
     }
 

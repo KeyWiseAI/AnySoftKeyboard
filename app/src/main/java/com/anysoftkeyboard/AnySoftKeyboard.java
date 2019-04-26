@@ -60,6 +60,7 @@ import com.anysoftkeyboard.ui.settings.MainSettingsActivity;
 import com.anysoftkeyboard.utils.IMEUtil;
 import com.google.android.voiceime.VoiceRecognitionTrigger;
 import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffect.BiAManager;
 import com.menny.android.anysoftkeyboard.BuildConfig;
 import com.menny.android.anysoftkeyboard.R;
 
@@ -232,6 +233,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
         getInputView().setKeyboardActionType(attribute.imeOptions);
 
         updateShiftStateNow();
+        BiAManager.getInstance(getApplicationContext()).startSession();
     }
 
     @Override
