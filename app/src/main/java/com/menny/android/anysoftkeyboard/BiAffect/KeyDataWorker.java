@@ -20,7 +20,6 @@ public class KeyDataWorker implements Runnable {
     @Override
     public void run() {
         sharedInstance = BiAManager.getInstance(null);
-        dbManagerSharedInstance = BiAManager.getDBMngrInstance();
         KeyDataPOJO[] temp;
         Semaphore temp_Semaphore;
         if(this.bucketk1){
@@ -39,8 +38,8 @@ public class KeyDataWorker implements Runnable {
             Log.i("CS_BiAffect_K","---------KEY BUFFER EMPTY START-----------"+this.bucketk1);
             for(KeyDataPOJO k:temp){
                 if(k.used && k.validatePOJO()){
-                    //Place a call to DB manager instance to insert this into the database
-                    //
+                    BiAffectDBManager sharedDbManager = BiAffectDBManager.getInstance();
+                    sharedDbManager.insertKeyTypeData(k.eventDownTime, k.keyType, k.keyCentre_X, k.keyCentre_Y, k.keyWidth, k.keyHeight);
 
                     k.markUnused();
 

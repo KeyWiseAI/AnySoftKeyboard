@@ -30,11 +30,8 @@ public interface BiADataProcessorInterface {
         //on the discretion of the person performing analysis of the data on how to treat that entry
 
         //One api will be to add a call to record the keyDownTime and the associated key code along with all values
-        //Second will be to update uptime in the db and also other values
 
-        boolean addKeyDataOnlyUpTime(long eventDownTime, int key_id, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight);
-        boolean updateUpTimeFor(long eventDownTime, long eventUpTime);
-
+        boolean addKeyDataOnlyDownTime(long eventDownTime, int key_id, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight);
 
     }
 

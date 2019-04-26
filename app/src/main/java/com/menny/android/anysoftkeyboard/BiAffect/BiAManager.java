@@ -219,14 +219,13 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
                     currentIndex++;
                 }
             }
-            //Log.i("CS_BiAffect_App_context",AnyApplication.getAppContext().toString());
         }
         return true;
     }
 
     //Key data specific calls
     @Override
-    public boolean addKeyDataOnlyUpTime(long eventDownTime, int key_id, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
+    public boolean addKeyDataOnlyDownTime(long eventDownTime, int keyType, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
         KeyDataPOJO[] temp;
         Semaphore temp_Semaphore;
         //assigning correct buffer;
@@ -243,7 +242,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             temp_Semaphore.acquire();
             temp[currentIndexKey].eventDownTime = eventDownTime;
             temp[currentIndexKey].eventUpTime = 0;
-            temp[currentIndexKey].keyId = key_id;
+            temp[currentIndexKey].keyType = keyType;
             temp[currentIndexKey].keyCentre_X = keyCentre_X;
             temp[currentIndexKey].keyCentre_Y = keyCentre_Y;
             temp[currentIndexKey].keyWidth = keyWidth;
@@ -280,21 +279,6 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             }
 
         }
-        //insert data into unsed pojo
-        //unlock semaphore
-        //deduce if it needs to kickoff another thread
-        //leave
         return false;
-    }
-
-    @Override
-    public boolean updateUpTimeFor(long eventDownTime, long eventUpTime) {
-        return false;
-    }
-
-    //to get DB Manager instance
-    public static BiAffectDBManager getDBMngrInstance()
-    {
-        return DBMngrINSTANCE;
     }
 }
