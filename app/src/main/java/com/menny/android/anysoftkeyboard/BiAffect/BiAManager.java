@@ -9,6 +9,7 @@ import android.util.Log;
 import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.SessionData;
 
 import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -34,6 +35,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     float current_accelerometer_y;
     float current_accelerometer_z;
 
+
+    // DB related variables
     /**
      * Created by Sreetama Banerjee on 4/22/2019.
      * reason : to allow all components of project to get appcontext
@@ -45,7 +48,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
      * reason : getting instance of database manager class
      */
      private static BiAffectDBManager DBMngrINSTANCE;
-
+     SessionData sessdata;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -120,15 +123,25 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     }
 
     //Session specific calls
-    public boolean startSession(){
-        //Entry into session table for start sesison
-        //Initialise db object
+    public boolean startSession(long sessionstarttime){
+        /*Entry into session table for start sesison
+          creating Session object and adding values
+          initially adding end time= start time as end time is non null. will be later updated*/
+
+        sessdata.startTime=sessionstarttime;
+        sessdata.endTime=sessionstarttime;
+        DBMngrINSTANCE.insertSessionStartTime(sessdata);
+
         //Keep the starttime of the cuurent session in a local variable so that it can be used in endsession query
+
         return true;
     }
 
-    public boolean endSession(){
+    public boolean endSession(long sessionendtime){
         //Entry into session table, for end session time
+        sessdata.endTime=sessionendtime;
+        DBMngrINSTANCE.updateSessionEndTime(sessdata);
+
         //Check for both the buffers if there are any used objects in the buffer, if yes, put them into db
         return true;
     }
