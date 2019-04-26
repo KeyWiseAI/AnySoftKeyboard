@@ -13,9 +13,10 @@ public class KeyData
     @ColumnInfo(name = "Key_Id")
     public long eventDownTime;
 
+    //will later need to add some mapping functionality key - type
     @NonNull
     @ColumnInfo(name = "Key_Type")
-    public long keyType;
+    public int keyType;
 
     @ColumnInfo(name = "radius%_of_key_downp_ress")
     public float radius_percent;

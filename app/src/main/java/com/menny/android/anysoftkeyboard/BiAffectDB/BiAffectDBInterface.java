@@ -22,9 +22,9 @@ public interface BiAffectDBInterface {
     }
 
     interface KeyTypeDataInterface {
-        void insertOnlySingleKeyMetrics (KeyData single_entry);
+        void insertKeyTypeData (long keyId,int keytypecode,float x,float y, float width, float height);
 
-        void insertMultipleKeyMetrics (KeyData[] keyDataList);
+        //void insertMultipleKeyMetrics (KeyData[] keyDataList);
 
         //for radius one way of adding to DB will be update at end of session. Also time of key up. Creating the stub as placeholder for now
         //not required but kept return type int so that Roomreturns number of rows edited. This will help in debugging

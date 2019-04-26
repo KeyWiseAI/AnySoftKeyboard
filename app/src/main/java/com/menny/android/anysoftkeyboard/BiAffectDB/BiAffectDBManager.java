@@ -40,7 +40,7 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
 //    public void insertTouchTypeEntryBatch(TouchData[] multi_entry){
 //        DBINSTANCE.TouchDataDao().insertMultipleTouchMetrics(multi_entry);
 //    }
-    
+
     @Override
     public TouchData[] fetchTouchDataRows(long keyId,int motioneventtype){
         return DBINSTANCE.TouchDataDao().fetchTouchData(keyId,motioneventtype);
@@ -56,14 +56,14 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
     }
 
     @Override
-    public void insertOnlySingleKeyMetrics (KeyData single_entry){
-        DBINSTANCE.KeyDataDAO().insertOnlySingleKeyMetrics(single_entry);
+    public void insertKeyTypeData (long keyId,int keytypecode,float x,float y, float width, float height){
+        //DBINSTANCE.KeyDataDAO().insertOnlySingleKeyMetrics(single_entry);
     }
 
-    @Override
-    public void insertMultipleKeyMetrics (KeyData[] keyDataList){
-        DBINSTANCE.KeyDataDAO().insertMultipleKeyMetrics(keyDataList);
-    }
+//    @Override
+//    public void insertMultipleKeyMetrics (KeyData[] keyDataList){
+//        DBINSTANCE.KeyDataDAO().insertMultipleKeyMetrics(keyDataList);
+//    }
 
     @Override
     public int updateRadiusofTouch(KeyData data){
