@@ -32,7 +32,8 @@ public abstract class BiAffectDB extends RoomDatabase {
             synchronized (BiAffectDB.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            BiAffectDB.class, "BiAffect_database")
+                            BiAffectDB.class, "BiAffect_database.db")
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

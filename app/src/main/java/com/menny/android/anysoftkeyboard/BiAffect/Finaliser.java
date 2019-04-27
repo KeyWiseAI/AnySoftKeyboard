@@ -1,7 +1,9 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
 
+import android.arch.persistence.room.Room;
 import android.util.Log;
 
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
 
 public class Finaliser implements Runnable {
@@ -65,6 +67,12 @@ public class Finaliser implements Runnable {
                     }
                 }
             }
+
+            BiAffectDB inst = Room.databaseBuilder(sharedInstance.mContext,
+                    BiAffectDB.class, "BiAffect_database.db")
+                    .fallbackToDestructiveMigration()
+                    .build();
+            inst.close();
 
         }catch (InterruptedException e){
 

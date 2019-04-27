@@ -1,5 +1,6 @@
 package com.menny.android.anysoftkeyboard.BiAffectDB;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.text.method.Touch;
 import android.util.Log;
@@ -33,7 +34,10 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
 
     //can put static if need be
     private BiAffectDBManager() {
-        DBINSTANCE=BiAffectDB.getDatabase(mcontext);
+        DBINSTANCE= Room.databaseBuilder(mcontext,
+                BiAffectDB.class, "BiAffect_database.db")
+                .fallbackToDestructiveMigration()
+                .build();
         mtouchDataDao = DBINSTANCE.TouchDataDao();
     }
 
