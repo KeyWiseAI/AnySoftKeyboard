@@ -1,17 +1,17 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.menny.android.anysoftkeyboard.AnyApplication;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.KeyData;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.SessionData;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.BiADatabaseManager;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.BiAffect_Database;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.SessionData;
 
 import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -49,20 +49,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     long currentRunningSession;
     boolean sessionRunning;
 
-
-    // DB related variables
-    /**
-     * Created by Sreetama Banerjee on 4/22/2019.
-     * reason : to allow all components of project to get appcontext
-     */
-     Context contextdb = AnyApplication.getAppContext();
-
-    /**
-     * Created by Sreetama Banerjee on 4/22/2019.
-     * reason : getting instance of database manager class
-     */
-     private static BiAffectDBManager DBMngrINSTANCE;
-     SessionData sessdata;
+    //Database
+    BiADatabaseManager mBiADatabaseManager;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -94,8 +82,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     private BiAManager(Context context){
         this.mContext = context;
         //This will initialise the dbManager when the constructor of BiAManager is called...
-        BiAffectDBManager.getInstance();
         //This wont contain anything as such
+
         this.myTupleQueue = new ArrayBlockingQueue<>(10000);
         this.processingMap = new LinkedHashMap<>();
         this.finalPOJOMap = new LinkedHashMap<>();
@@ -124,6 +112,23 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
         //This should be done when the session starts and undone when the session ends
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 10);
+
+        //DB
+        mBiADatabaseManager = BiADatabaseManager.getInstance(mContext);
+
+        //call to send the device data to db
+        sendDeviceData();
+    }
+
+    public void sendDeviceData(){
+        Log.i("DEVICEDATA", "CALLING");
+        Thread temp = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mBiADatabaseManager.insertDeviceData(mContext);
+            }
+        });
+        temp.start();
     }
 
     public static synchronized BiAManager getInstance(Context mContext)
@@ -152,12 +157,17 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         this.sessionRunning = true;
         this.currentRunningSession = System.currentTimeMillis();
         Log.i("CS_BiAffect_S","startTime -> "+currentRunningSession);
+
+        Thread accelerometerDataCollector = new Thread(new AccelerometerDataWorker(mBiADatabaseManager));
+        accelerometerDataCollector.start();
+
         Thread temp = new Thread(new Runnable() {
             @Override
             public void run() {
-                BiAffectDBManager.getInstance().insertSessionStartTime(currentRunningSession);
+                mBiADatabaseManager.insertSessionData(currentRunningSession);
             }
         });
+        temp.start();
         Log.i("CS_BiAffect_S","-----------Start SESSION End-------------");
         return true;
     }
@@ -167,7 +177,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         Log.i("CS_BiAffect_E","-----------END SESSION START-------------");
         this.sessionRunning = false;
         long sessionEndTime = System.currentTimeMillis();
-        Thread temp = new Thread(new Finaliser(this.currentRunningSession, sessionEndTime));
+        Thread temp = new Thread(new Finaliser(this.currentRunningSession, sessionEndTime, mBiADatabaseManager));
         temp.start();
         Log.i("CS_BiAffect_E","-----------END SESSION END-------------");
         return true;
@@ -220,7 +230,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
                     //We can kickoff a worker thread from here to take all the pojos and insert it into the database
                     //We will pass the number of the last buffer being used and then expect the thread to infer from that which one
                     //needs to be emptied
-                    Thread t = new Thread(new TouchDataWorker(this.bucket1));
+                    Thread t = new Thread(new TouchDataWorker(this.bucket1, mBiADatabaseManager));
                     t.start();
                     //Time to change the buffer and put all the things in the second from next
                     this.currentIndex = 0;
@@ -278,7 +288,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
                     //We can kickoff a worker thread from here to take all the pojos and insert it into the database
                     //We will pass the number of the last buffer being used and then expect the thread to infer from that which one
                     //needs to be emptied
-                    Thread t = new Thread(new KeyDataWorker(this.bucketk1));
+                    Thread t = new Thread(new KeyDataWorker(this.bucketk1, mBiADatabaseManager));
                     t.start();
                     //Time to change the buffer and put all the things in the second from next
                     this.currentIndexKey = 0;

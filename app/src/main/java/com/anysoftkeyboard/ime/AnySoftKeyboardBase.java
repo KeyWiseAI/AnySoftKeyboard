@@ -318,7 +318,7 @@ public abstract class AnySoftKeyboardBase extends InputMethodService implements 
         while (handleCloseRequest()) {
             Logger.i(TAG, "Still have stuff to close. Trying handleCloseRequest again.");
         }
-        BiAManager.getInstance(getApplicationContext()).endSession();
+        BiAManager.getInstance(AnyApplication.getAppContext()).endSession();
         super.hideWindow();
     }
 

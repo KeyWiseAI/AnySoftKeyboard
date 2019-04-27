@@ -25,6 +25,8 @@ import com.anysoftkeyboard.api.KeyCodes;
 import com.anysoftkeyboard.keyboards.AnyKeyboard.AnyKey;
 import com.anysoftkeyboard.keyboards.Keyboard.Key;
 import com.anysoftkeyboard.keyboards.views.AnyKeyboardViewBase.KeyPressTimingHandler;
+import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffect.BiAManager;
 
 import java.util.Locale;
 
@@ -247,6 +249,8 @@ class PointerTracker {
         Log.i("CS_BiAffect_K", "EventTime->"+eventTime);
         Log.i("CS_BiAffect_K", "X->"+x);
         Log.i("CS_BiAffect_K", "Y->"+y);
+        Key temp = getKey(keyIndex);
+        BiAManager.getInstance(AnyApplication.getAppContext()).addKeyDataOnlyDownTime(eventTime, temp.getPrimaryCode(), temp.centerX, temp.centerY, temp.width, temp.height);
         checkMultiTap(eventTime, keyIndex);
         if (mListener != null && isValidKeyIndex(keyIndex)) {
             AnyKey key = (AnyKey) mKeys[keyIndex];

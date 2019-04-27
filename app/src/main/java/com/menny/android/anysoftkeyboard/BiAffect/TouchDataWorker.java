@@ -1,20 +1,19 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.menny.android.anysoftkeyboard.AnyApplication;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.BiADatabaseManager;
 
 import java.util.concurrent.Semaphore;
 
 public class TouchDataWorker implements Runnable {
     boolean bucket1;
     BiAManager sharedInstance;
-    TouchDataWorker(boolean bucket1){
+    BiADatabaseManager mBiADatabaseManager;
+    TouchDataWorker(boolean bucket1, BiADatabaseManager databaseManager){
         super();
         this.bucket1 = bucket1;
+        mBiADatabaseManager = databaseManager;
     }
 
     @Override
@@ -32,12 +31,11 @@ public class TouchDataWorker implements Runnable {
         try {
             temp_Sempaphore.acquire();
             Log.i("CS_BiAffect","-----------BUFFER EMPTY START-------------"+this.bucket1);
-            for(int i=0; i<temp.length; i++) {
-                if (temp[i].used && temp[i].validatePOJO()) {
+            for(TouchDataPOJO data:temp) {
+                if (data.used && data.validatePOJO()) {
                     //Ready to be used inside the code
-                    BiAffectDBManager sharedDbManager = BiAffectDBManager.getInstance();
-                    sharedDbManager.insertTouchTypeData(temp[i].eventDownTime, temp[i].eventTime, temp[i].eventAction, temp[i].pressure, temp[i].x_cord, temp[i].y_cord, temp[i].major_axis, temp[i].minor_axis);
-                    temp[i].markUnused();
+                    mBiADatabaseManager.insertTouchData(data.eventDownTime, data.eventTime, data.eventAction, data.pressure, data.x_cord, data.y_cord, data.major_axis, data.minor_axis);
+                    data.markUnused();
                 }
             }
         }catch (InterruptedException e){

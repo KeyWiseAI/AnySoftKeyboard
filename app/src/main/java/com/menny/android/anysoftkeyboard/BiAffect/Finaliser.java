@@ -1,10 +1,10 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
 
-import android.arch.persistence.room.Room;
 import android.util.Log;
 
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.BiADatabaseManager;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.BiAffect_Database;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.SessionData;
 
 public class Finaliser implements Runnable {
 
@@ -12,12 +12,14 @@ public class Finaliser implements Runnable {
     long endTime;
     BiAManager sharedInstance;
     int count=0;
+    BiADatabaseManager mBiADatabaseManager;
 
-    public Finaliser(long startTime, long endTime){
+    public Finaliser(long startTime, long endTime, BiADatabaseManager databaseManager){
         super();
         this.startTime = startTime;
         this.endTime = endTime;
         this.sharedInstance = BiAManager.getInstance(null);
+        mBiADatabaseManager = databaseManager;
     }
 
     @Override
@@ -35,44 +37,35 @@ public class Finaliser implements Runnable {
             for(int i=0; i<max; i++){
                 if(i<sharedInstance.KEY_BUFFER_SIZE){
                     if(sharedInstance.k1[i].used){
-                        KeyDataPOJO temp = sharedInstance.k1[i];
-                        BiAffectDBManager.getInstance().insertKeyTypeData(temp.eventDownTime, temp.keyType, temp.keyCentre_X, temp.keyCentre_Y, temp.keyWidth, temp.keyHeight);
-                        temp.printYourself();
-                        temp.markUnused();
+                        KeyDataPOJO k = sharedInstance.k1[i];
+                        mBiADatabaseManager.insertKeyData(k.eventDownTime, k.keyType, k.keyCentre_X, k.keyCentre_Y, k.keyWidth, k.keyHeight);
+                        k.markUnused();
                         count++;
                     }
                     if(sharedInstance.k2[i].used){
-                        KeyDataPOJO temp = sharedInstance.k2[i];
-                        BiAffectDBManager.getInstance().insertKeyTypeData(temp.eventDownTime, temp.keyType, temp.keyCentre_X, temp.keyCentre_Y, temp.keyWidth, temp.keyHeight);
-                        temp.printYourself();
-                        temp.markUnused();
+                        KeyDataPOJO k = sharedInstance.k2[i];
+                        mBiADatabaseManager.insertKeyData(k.eventDownTime, k.keyType, k.keyCentre_X, k.keyCentre_Y, k.keyWidth, k.keyHeight);
+                        k.markUnused();
                         count++;
                     }
                 }
 
                 if(i<sharedInstance.TOUCH_BUFFER_SIZE){
                     if(sharedInstance.t1[i].used){
-                        TouchDataPOJO temp = sharedInstance.t1[i];
-                        BiAffectDBManager.getInstance().insertTouchTypeData(temp.eventDownTime, temp.eventTime, temp.eventAction, temp.pressure, temp.x_cord, temp.y_cord, temp.major_axis, temp.minor_axis);
-                        temp.printYourself();
-                        temp.markUnused();
+                        TouchDataPOJO data = sharedInstance.t1[i];
+                        mBiADatabaseManager.insertTouchData(data.eventDownTime, data.eventTime, data.eventAction, data.pressure, data.x_cord, data.y_cord, data.major_axis, data.minor_axis);
+                        data.markUnused();
                         count++;
                     }
                     if(sharedInstance.t2[i].used){
-                        TouchDataPOJO temp = sharedInstance.t2[i];
-                        BiAffectDBManager.getInstance().insertTouchTypeData(temp.eventDownTime, temp.eventTime, temp.eventAction, temp.pressure, temp.x_cord, temp.y_cord, temp.major_axis, temp.minor_axis);
-                        temp.printYourself();
-                        temp.markUnused();
+                        TouchDataPOJO data = sharedInstance.t2[i];
+                        mBiADatabaseManager.insertTouchData(data.eventDownTime, data.eventTime, data.eventAction, data.pressure, data.x_cord, data.y_cord, data.major_axis, data.minor_axis);
+                        data.markUnused();
                         count++;
                     }
                 }
             }
-
-            BiAffectDB inst = Room.databaseBuilder(sharedInstance.mContext,
-                    BiAffectDB.class, "BiAffect_database.db")
-                    .fallbackToDestructiveMigration()
-                    .build();
-            inst.close();
+        mBiADatabaseManager.updateSessionData(startTime,endTime);
 
         }catch (InterruptedException e){
 
@@ -82,7 +75,6 @@ public class Finaliser implements Runnable {
             sharedInstance.k2_Semaphore.release();
             sharedInstance.t1_Sempahore.release();
             sharedInstance.t2_Sempahore.release();
-            BiAffectDBManager.getInstance().updateSessionEndTime(startTime, endTime);
             Log.i("CS_BiAffect_E_T","Count ->"+count);
             Log.i("CS_BiAffect_E_T","-----------FINALISER END-------------");
 

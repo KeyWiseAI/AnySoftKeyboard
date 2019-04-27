@@ -2,7 +2,7 @@ package com.menny.android.anysoftkeyboard.BiAffect;
 
 import android.util.Log;
 
-import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.BiADatabaseManager;
 
 import java.util.concurrent.Semaphore;
 
@@ -10,11 +10,11 @@ public class KeyDataWorker implements Runnable {
 
     boolean bucketk1;
     BiAManager sharedInstance;
-    BiAffectDBManager dbManagerSharedInstance;
-
-    public KeyDataWorker(boolean bucketk1){
+    BiADatabaseManager mBiADatabaseManager;
+    public KeyDataWorker(boolean bucketk1, BiADatabaseManager databaseManager){
         super();
         this.bucketk1=bucketk1;
+        mBiADatabaseManager = databaseManager;
     }
 
     @Override
@@ -38,11 +38,8 @@ public class KeyDataWorker implements Runnable {
             Log.i("CS_BiAffect_K","---------KEY BUFFER EMPTY START-----------"+this.bucketk1);
             for(KeyDataPOJO k:temp){
                 if(k.used && k.validatePOJO()){
-                    BiAffectDBManager sharedDbManager = BiAffectDBManager.getInstance();
-                    sharedDbManager.insertKeyTypeData(k.eventDownTime, k.keyType, k.keyCentre_X, k.keyCentre_Y, k.keyWidth, k.keyHeight);
-
+                    mBiADatabaseManager.insertKeyData(k.eventDownTime, k.keyType, k.keyCentre_X, k.keyCentre_Y, k.keyWidth, k.keyHeight);
                     k.markUnused();
-
                 }
             }
         }catch (InterruptedException e){
