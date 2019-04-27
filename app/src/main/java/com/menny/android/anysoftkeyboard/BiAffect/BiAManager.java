@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
+import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import com.menny.android.anysoftkeyboard.BiAffect.Database.BiADatabaseManager;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.BiAffect_Database;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.SessionData;
 
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -52,6 +54,11 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     //Database
     BiADatabaseManager mBiADatabaseManager;
 
+    //TIME OFFSETS
+    long birthTime;
+    long upTimeAtBirth;
+    long offset;
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
@@ -80,6 +87,10 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
 
     private BiAManager(Context context){
+        this.birthTime = System.currentTimeMillis();
+        this.upTimeAtBirth = SystemClock.uptimeMillis();
+        this.offset = birthTime - upTimeAtBirth;
+
         this.mContext = context;
         //This will initialise the dbManager when the constructor of BiAManager is called...
         //This wont contain anything as such
@@ -201,8 +212,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         //lock the buffer, if lock fails, there is something wrong with the code
         try {
             temp_Semaphore.acquire();
-            temp[currentIndex].eventDownTime = eventDownTime;
-            temp[currentIndex].eventTime = eventTime;
+            temp[currentIndex].eventDownTime = eventDownTime + offset;
+            temp[currentIndex].eventTime = eventTime + offset;
             temp[currentIndex].eventAction = eventAction;
             temp[currentIndex].pressure = pressure;
             temp[currentIndex].x_cord = x_cord;
@@ -264,8 +275,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         //Lock the semaphore
         try {
             temp_Semaphore.acquire();
-            temp[currentIndexKey].eventDownTime = eventDownTime;
-            temp[currentIndexKey].eventUpTime = 0;
+            temp[currentIndexKey].eventDownTime = eventDownTime + offset;
+            temp[currentIndexKey].eventUpTime = 0 + offset;
             temp[currentIndexKey].keyType = keyType;
             temp[currentIndexKey].keyCentre_X = keyCentre_X;
             temp[currentIndexKey].keyCentre_Y = keyCentre_Y;
