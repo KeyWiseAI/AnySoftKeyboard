@@ -37,7 +37,7 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
         mtouchDataDao = DBINSTANCE.TouchDataDao();
     }
 
-    @Override
+
     public void insertTouchTypeData(long eventDowntime,long eventTime,int eventAction,float pressure,float x, float y,float major_Axis,float minor_axis){
         Log.i("CS_BiA_TP_T","Start");
         Log.i("CS_BiA_TP_T","downTime -> "+eventDowntime);
@@ -53,7 +53,13 @@ public class BiAffectDBManager implements BiAffectDBInterface.TouchDataInterface
         mtouchDataDao.insertOnlySingleTouchMetrics(TouchDataObj);
         Log.i("CS_BiA_TP_T","End");
     }
-//    @Override
+
+    @Override
+    public void insertTouchTypeData(TouchData singleEntry) {
+        mtouchDataDao.insertOnlySingleTouchMetrics(singleEntry);
+    }
+
+    //    @Override
 //    public void insertTouchTypeEntryBatch(TouchData[] multi_entry){
 //        DBINSTANCE.TouchDataDao().insertMultipleTouchMetrics(multi_entry);
 //    }

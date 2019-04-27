@@ -1,4 +1,5 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,6 +10,7 @@ import android.util.Log;
 import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.Touch_DAO;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.KeyData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.SessionData;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
@@ -50,12 +52,14 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     boolean sessionRunning;
 
 
+
     // DB related variables
     /**
      * Created by Sreetama Banerjee on 4/22/2019.
      * reason : to allow all components of project to get appcontext
      */
      Context contextdb = AnyApplication.getAppContext();
+     Touch_DAO mTouch_dao;
 
     /**
      * Created by Sreetama Banerjee on 4/22/2019.
@@ -63,6 +67,10 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
      */
      private static BiAffectDBManager DBMngrINSTANCE;
      SessionData sessdata;
+     public BiAffectDB DBINSTANCE = Room.databaseBuilder(AnyApplication.getAppContext(),
+             BiAffectDB.class, "BiAffect_database.db")
+             .fallbackToDestructiveMigration()
+             .build();
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -95,6 +103,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         this.mContext = context;
         //This will initialise the dbManager when the constructor of BiAManager is called...
         BiAffectDBManager.getInstance();
+        mTouch_dao = DBINSTANCE.TouchDataDao();
         //This wont contain anything as such
         this.myTupleQueue = new ArrayBlockingQueue<>(10000);
         this.processingMap = new LinkedHashMap<>();
@@ -149,25 +158,25 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     public boolean startSession(){
         //check once.. I dont think the event time is stored as milli sec
         Log.i("CS_BiAffect_S","-----------Start SESSION START-------------");
-        this.sessionRunning = true;
-        this.currentRunningSession = System.currentTimeMillis();
-        Log.i("CS_BiAffect_S","startTime -> "+currentRunningSession);
-        Thread temp = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BiAffectDBManager.getInstance().insertSessionStartTime(currentRunningSession);
-            }
-        });
+//        this.sessionRunning = true;
+//        this.currentRunningSession = System.currentTimeMillis();
+//        Log.i("CS_BiAffect_S","startTime -> "+currentRunningSession);
+//        Thread temp = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                BiAffectDBManager.getInstance().insertSessionStartTime(currentRunningSession);
+//            }
+//        });
         Log.i("CS_BiAffect_S","-----------Start SESSION End-------------");
         return true;
     }
 
     public boolean endSession(){
-        if(!this.sessionRunning) return false;
+        //if(!this.sessionRunning) return false;
         Log.i("CS_BiAffect_E","-----------END SESSION START-------------");
         this.sessionRunning = false;
         long sessionEndTime = System.currentTimeMillis();
-        Thread temp = new Thread(new Finaliser(this.currentRunningSession, sessionEndTime));
+        Thread temp = new Thread(new Finaliser(this.currentRunningSession, sessionEndTime,DBINSTANCE));
         temp.start();
         Log.i("CS_BiAffect_E","-----------END SESSION END-------------");
         return true;

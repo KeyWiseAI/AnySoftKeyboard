@@ -315,10 +315,10 @@ public abstract class AnySoftKeyboardBase extends InputMethodService implements 
      */
     @Override
     public void hideWindow() {
+        boolean temp = BiAManager.getInstance(null).endSession();
         while (handleCloseRequest()) {
             Logger.i(TAG, "Still have stuff to close. Trying handleCloseRequest again.");
         }
-        BiAManager.getInstance(getApplicationContext()).endSession();
         super.hideWindow();
     }
 

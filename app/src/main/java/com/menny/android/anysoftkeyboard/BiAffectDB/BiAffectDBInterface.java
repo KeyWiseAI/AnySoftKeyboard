@@ -9,8 +9,9 @@ import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchDa
 
 public interface BiAffectDBInterface {
     interface TouchDataInterface {
-        void insertTouchTypeData(long eventDowntime,long eventTime,int eventAction,float pressure,float x, float y,float major_Axis,float minor_axis);
+//        void insertTouchTypeData(long eventDowntime,long eventTime,int eventAction,float pressure,float x, float y,float major_Axis,float minor_axis);
         //void insertTouchTypeEntryBatch(TouchData[] multi_entry);
+        void insertTouchTypeData(TouchData singleEntry);
         TouchData[] fetchTouchDataRows(long keyId,int motioneventtype);
 
     }

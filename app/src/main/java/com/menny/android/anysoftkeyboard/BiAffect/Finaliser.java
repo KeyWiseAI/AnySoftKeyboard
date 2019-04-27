@@ -2,7 +2,11 @@ package com.menny.android.anysoftkeyboard.BiAffect;
 
 import android.util.Log;
 
+import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB;
 import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDBManager;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomDAO.Touch_DAO;
+import com.menny.android.anysoftkeyboard.BiAffectDB.BiAffectDB_roomModel.TouchData;
 
 public class Finaliser implements Runnable {
 
@@ -10,12 +14,14 @@ public class Finaliser implements Runnable {
     long endTime;
     BiAManager sharedInstance;
     int count=0;
+    BiAffectDB INSTANCE;
 
-    public Finaliser(long startTime, long endTime){
+    public Finaliser(long startTime, long endTime, BiAffectDB mDB){
         super();
         this.startTime = startTime;
         this.endTime = endTime;
         this.sharedInstance = BiAManager.getInstance(null);
+        INSTANCE = mDB;
     }
 
     @Override
@@ -51,8 +57,18 @@ public class Finaliser implements Runnable {
                 if(i<sharedInstance.TOUCH_BUFFER_SIZE){
                     if(sharedInstance.t1[i].used){
                         TouchDataPOJO temp = sharedInstance.t1[i];
-                        BiAffectDBManager.getInstance().insertTouchTypeData(temp.eventDownTime, temp.eventTime, temp.eventAction, temp.pressure, temp.x_cord, temp.y_cord, temp.major_axis, temp.minor_axis);
-                        temp.printYourself();
+                        //BiAffectDBManager.getInstance().insertTouchTypeData(temp.eventDownTime, temp.eventTime, temp.eventAction, temp.pressure, temp.x_cord, temp.y_cord, temp.major_axis, temp.minor_axis);
+                        TouchData TouchDataObj =new TouchData();
+                        TouchDataObj.eventDownTime=temp.eventDownTime;
+                        TouchDataObj.eventTime = temp.eventTime;
+                        TouchDataObj.eventAction=temp.eventAction;
+                        TouchDataObj.pressure=temp.pressure;
+                        TouchDataObj.x_cord=temp.x_cord;
+                        TouchDataObj.y_cord=temp.y_cord;
+                        TouchDataObj.major_axis=temp.major_axis;
+                        TouchDataObj.minor_axis=temp.minor_axis;
+                        INSTANCE.TouchDataDao().insertOnlySingleTouchMetrics(TouchDataObj);
+                        //temp.printYourself();
                         temp.markUnused();
                         count++;
                     }
@@ -65,6 +81,7 @@ public class Finaliser implements Runnable {
                     }
                 }
             }
+            BiAffectDBManager.getInstance().updateSessionEndTime(startTime, endTime);
 
         }catch (InterruptedException e){
 
@@ -74,7 +91,6 @@ public class Finaliser implements Runnable {
             sharedInstance.k2_Semaphore.release();
             sharedInstance.t1_Sempahore.release();
             sharedInstance.t2_Sempahore.release();
-            BiAffectDBManager.getInstance().updateSessionEndTime(startTime, endTime);
             Log.i("CS_BiAffect_E_T","Count ->"+count);
             Log.i("CS_BiAffect_E_T","-----------FINALISER END-------------");
 
