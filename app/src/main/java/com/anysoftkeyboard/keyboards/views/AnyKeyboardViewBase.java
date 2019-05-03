@@ -1759,10 +1759,6 @@ public class AnyKeyboardViewBase extends View implements
                 tracker.onMoveEvent((int) nativeMotionEvent.getX(i), (int) nativeMotionEvent.getY(i), eventTime);
             }
         } else {
-            Long tsLong = System.currentTimeMillis()/1000;
-            Log.d("CS TS -> ", tsLong.toString());
-            float fg = nativeMotionEvent.getPressure();
-            Log.d("CS TS -> ", fg + " ");
             PointerTracker tracker = getPointerTracker(id);
             sendOnXEvent(action, eventTime, x, y, tracker);
         }
@@ -1811,8 +1807,6 @@ public class AnyKeyboardViewBase extends View implements
             Log.d("CS TS -> ", tsLong.toString());
             mPointerQueue.releaseAllPointersExcept(tracker, eventTime);
         }
-        Long tsLong = System.currentTimeMillis()/1000;
-        Log.d("CS TS -> ", tsLong.toString());
         tracker.onDownEvent(x, y, eventTime);
         mPointerQueue.add(tracker);
     }

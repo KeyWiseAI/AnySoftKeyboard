@@ -6,14 +6,15 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.menny.android.anysoftkeyboard.BiAffect.Database.DAO.Device_DAO;
+
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.AccelerometerData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.DeviceData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.KeyTypeData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.SessionData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.TouchTypeData;
 
-public class BiADatabaseManager {
+public class BiADatabaseManager implements BiADBInterface.TouchDataInterface,BiADBInterface.KeyDataInterface,
+BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterface.DeviceData {
 
     private static BiADatabaseManager sharedInstance;
     private static BiAffect_Database mDatabaseInstance;
@@ -33,12 +34,14 @@ public class BiADatabaseManager {
     }
 
     //exposed API for Session
+    @Override
     public void insertSessionData(long sessionStartTime){
         SessionData currentSessionData = new SessionData();
         currentSessionData.sessionStartTime = sessionStartTime;
         mDatabaseInstance.mSession_dao().insertSessionStartTime(currentSessionData);
     }
 
+    @Override
     public void updateSessionData(long sessionStartTime, long sessionEndTime){
         SessionData currentSessionData = new SessionData();
         currentSessionData.sessionStartTime = sessionStartTime;
@@ -47,6 +50,7 @@ public class BiADatabaseManager {
     }
 
     //exposed Api for touch data
+    @Override
     public void insertTouchData(long eventDownTime, long eventTime, int eventAction, float pressure, float x_cord, float y_cord, float majorAxis, float minorAxis){
         TouchTypeData data = new TouchTypeData();
         data.eventDownTime = eventDownTime;
@@ -61,6 +65,7 @@ public class BiADatabaseManager {
     }
 
     //exposed api for keydata
+    @Override
     public void insertKeyData(long keyDownTime, int keyCode, float centre_X, float centre_Y, float width, float height){
         KeyTypeData data = new KeyTypeData();
         data.keyDownTime_id = keyDownTime;
@@ -70,10 +75,15 @@ public class BiADatabaseManager {
         data.key_Width = width;
         data.key_Height = height;
 
-        mDatabaseInstance.mKey_dao().insertSingleKeyData(data);
+        try {
+            mDatabaseInstance.mKey_dao().insertSingleKeyData(data);
+        }catch(Exception e){
+            Log.i("BiAffect", "Exception caught in insertKeyData at "+keyDownTime+ "\n");
+        }
     }
 
     //accelerometer exposed apis
+    @Override
     public void insertAccelerometerData(long time, float x, float y, float z){
         AccelerometerData data = new AccelerometerData();
         data.time = time;
@@ -84,6 +94,7 @@ public class BiADatabaseManager {
     }
 
     //api exposed for Device Data
+    @Override
     public void insertDeviceData(Context c){
         int size=-1;
         try {
