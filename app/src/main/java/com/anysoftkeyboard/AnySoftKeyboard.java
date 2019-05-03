@@ -204,6 +204,11 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
                             DeveloperUtils.getTraceFile()), Toast.LENGTH_SHORT)
                     .show();
         }
+        if(!BiAManager.getInstance(AnyApplication.getAppContext()).endSession()){
+            Log.i("BiAffect", "End Session Failed in hideWindow");
+        }else{
+            Log.i("BiAffect", "End Session Successfull in hideWindow");
+        }
 
         super.onDestroy();
     }
@@ -219,8 +224,13 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
         Logger.v(TAG, "onStartInputView(EditorInfo{imeOptions %d, inputType %d}, restarting %s",
                 attribute.imeOptions, attribute.inputType, restarting);
 
+        if(!BiAManager.getInstance(AnyApplication.getAppContext()).startSession()){
+            Log.i("BiAffect", "Start Session Failed");
+        }else{
+            Log.i("BiAffect", "Start Session Successfull");
+        }
+
         super.onStartInputView(attribute, restarting);
-        BiAManager.getInstance(AnyApplication.getAppContext()).startSession();
         if (mVoiceRecognitionTrigger != null) {
             mVoiceRecognitionTrigger.onStartInputView();
         }
@@ -1131,6 +1141,11 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        if(!BiAManager.getInstance(AnyApplication.getAppContext()).endSession()){
+            Log.i("BiAffect", "End Session Failed");
+        }else{
+            Log.i("BiAffect", "End Session Successfull");
+        }
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation != mOrientation) {
             mOrientation = newConfig.orientation;

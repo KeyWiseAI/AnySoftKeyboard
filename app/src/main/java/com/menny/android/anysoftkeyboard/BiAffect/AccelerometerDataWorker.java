@@ -20,7 +20,7 @@ public class AccelerometerDataWorker implements Runnable {
         while(sharedInstance.sessionRunning){
             long currentTime = System.currentTimeMillis();
             mBiADatabaseManager.insertAccelerometerData(currentTime, sharedInstance.current_accelerometer_x, sharedInstance.current_accelerometer_y, sharedInstance.current_accelerometer_z);
-            Log.i("ACC", "PUSHED");
+            //Log.i("ACC", "PUSHED");
             try {
                 Thread.sleep(oneSecondMillis/FREQUENCY);
             }catch (InterruptedException e){

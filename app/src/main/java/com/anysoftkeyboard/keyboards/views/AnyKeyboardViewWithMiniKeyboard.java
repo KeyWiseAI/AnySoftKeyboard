@@ -97,8 +97,6 @@ public class AnyKeyboardViewWithMiniKeyboard extends SizeSensitiveAnyKeyboardVie
             translated.recycle();
             return true;
         }
-        Long tsLong = System.currentTimeMillis()/1000;
-        Log.d("CS TS -> ", tsLong.toString());
         return super.onTouchEvent(me);
     }
 

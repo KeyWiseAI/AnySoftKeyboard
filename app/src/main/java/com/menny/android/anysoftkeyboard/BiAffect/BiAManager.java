@@ -19,9 +19,12 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
-public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorInterface, BiADataProcessorInterface, SensorEventListener, BiADataProcessorInterface.KeyDataProcessorInterface {
-
-    private BiAWorker1 myCurrentWorker1;
+public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorInterface,
+        BiADataProcessorInterface, SensorEventListener,
+        BiADataProcessorInterface.KeyDataProcessorInterface,
+        BiADataProcessorInterface.SessionDataProcessorInterface,
+        BiADataProcessorInterface.DeviceDataProcessorInterface
+{
 
     //Context specific holders
     Context mContext;
@@ -73,18 +76,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     }
 
-    //Instead of inner static class we can also use enum
-    static class FeatureLookupStruct{
-        final static String pressure = "PRESSURE";
-        //final static String action_key_up = "Up";
-        //final static String action_key_down = "Down";
-    }
-
     private static BiAManager shared_instance = null;
-    ArrayBlockingQueue<BiAFeature> myTupleQueue;
-    LinkedHashMap<Long, BiAPOJO> processingMap;
-    LinkedHashMap<Long, BiAPOJO> finalPOJOMap;
-
 
     private BiAManager(Context context){
         this.birthTime = System.currentTimeMillis();
@@ -94,10 +86,6 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         this.mContext = context;
         //This will initialise the dbManager when the constructor of BiAManager is called...
         //This wont contain anything as such
-
-        this.myTupleQueue = new ArrayBlockingQueue<>(10000);
-        this.processingMap = new LinkedHashMap<>();
-        this.finalPOJOMap = new LinkedHashMap<>();
 
         //Initialising all the buffers
         this.t1 = new TouchDataPOJO[TOUCH_BUFFER_SIZE];
@@ -131,8 +119,9 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         sendDeviceData();
     }
 
+    @Override
     public void sendDeviceData(){
-        Log.i("DEVICEDATA", "CALLING");
+        //Log.i("DEVICEDATA", "CALLING");
         Thread temp = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -153,21 +142,16 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         return shared_instance;
     }
 
-    @Override
-    public boolean recordKeyPressForce(long eventDownTime, double pressure, int action) throws NullPointerException, InterruptedException{
-        System.out.println("BiAffect recordKeyPressForce received for "+eventDownTime+ " For action "+ action);
-        Pressure myPressure = new Pressure(FeatureLookupStruct.pressure, eventDownTime, pressure, action);
-        shared_instance.myTupleQueue.put(myPressure);
-        return true;
-    }
-
     //Session specific calls
+    @Override
     public boolean startSession(){
         //check once.. I dont think the event time is stored as milli sec
-        Log.i("CS_BiAffect_S","-----------Start SESSION START-------------");
+        Log.i("CS_BiAffect_Sess","-----------Start SESSION START-------------");
+        Log.i("CS_BiAffect_Sess",Log.getStackTraceString(new Exception()));
+
         this.sessionRunning = true;
         this.currentRunningSession = System.currentTimeMillis();
-        Log.i("CS_BiAffect_S","startTime -> "+currentRunningSession);
+        Log.i("CS_BiAffect_Sess","startTime -> "+currentRunningSession);
 
         Thread accelerometerDataCollector = new Thread(new AccelerometerDataWorker(mBiADatabaseManager));
         accelerometerDataCollector.start();
@@ -179,18 +163,20 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             }
         });
         temp.start();
-        Log.i("CS_BiAffect_S","-----------Start SESSION End-------------");
+        Log.i("CS_BiAffect_Sess","-----------Start SESSION End-------------");
         return true;
     }
 
+    @Override
     public boolean endSession(){
         if(!this.sessionRunning) return false;
-        Log.i("CS_BiAffect_E","-----------END SESSION START-------------");
+        Log.i("CS_BiAffect_Sess","-----------END SESSION START-------------");
+        Log.i("CS_BiAffect_Sess",Log.getStackTraceString(new Exception()));
         this.sessionRunning = false;
         long sessionEndTime = System.currentTimeMillis();
         Thread temp = new Thread(new Finaliser(this.currentRunningSession, sessionEndTime, mBiADatabaseManager));
         temp.start();
-        Log.i("CS_BiAffect_E","-----------END SESSION END-------------");
+        Log.i("CS_BiAffect_Sess","-----------END SESSION END-------------");
         return true;
     }
 
