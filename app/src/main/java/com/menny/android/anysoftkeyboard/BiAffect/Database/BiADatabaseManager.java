@@ -26,7 +26,8 @@ public class BiADatabaseManager {
     }
 
     private BiADatabaseManager(Context appContext) {
-        mDatabaseInstance = Room.databaseBuilder(appContext, BiAffect_Database.class, "BiAffect_Database.db")
+        mDatabaseInstance = Room.databaseBuilder(appContext, BiAffect_Database.class,
+                "BiAffect_Database.db")
                 .fallbackToDestructiveMigration()
                 .build();
 

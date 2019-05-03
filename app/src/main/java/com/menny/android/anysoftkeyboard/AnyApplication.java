@@ -183,6 +183,9 @@ public class AnyApplication extends Application {
         appContext = getApplicationContext();
     }
 
+    public static Context getAppContext1() {
+        return appContext;
+    }
 
 
     @Override
@@ -321,6 +324,7 @@ public class AnyApplication extends Application {
      * Created by Sreetama Banerjee on 4/22/2019.
      * reason : to allow all components of project to get appcontext
      */
+
     public static Context getAppContext() {
         return appContext;
     }

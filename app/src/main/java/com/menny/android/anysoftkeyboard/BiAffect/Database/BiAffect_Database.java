@@ -13,7 +13,8 @@ import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.KeyTypeData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.SessionData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.TouchTypeData;
 
-@Database(entities = {SessionData.class, TouchTypeData.class, KeyTypeData.class, AccelerometerData.class, DeviceData.class}, version = 1, exportSchema = false)
+@Database(entities = {SessionData.class, TouchTypeData.class, KeyTypeData.class,
+        AccelerometerData.class, DeviceData.class}, version = 1, exportSchema = false)
 public abstract class BiAffect_Database extends RoomDatabase {
     public abstract Session_DAO mSession_dao();
     public abstract Touch_DAO mTouch_dao();
