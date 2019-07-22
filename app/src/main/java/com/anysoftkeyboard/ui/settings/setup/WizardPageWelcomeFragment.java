@@ -40,6 +40,7 @@ public class WizardPageWelcomeFragment extends WizardPageBaseFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.findViewById(R.id.go_to_start_setup).setOnClickListener(this);
+        //view.findViewById(R.id.start_to_Logging).setOnClickListener(this);
         view.findViewById(R.id.setup_wizard_welcome_privacy_action).setOnClickListener(this);
 
         mDemoAnyKeyboardView = view.findViewById(R.id.demo_keyboard_view);
@@ -53,11 +54,14 @@ public class WizardPageWelcomeFragment extends WizardPageBaseFragment implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case R.id.go_to_start_setup:
-                final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-                editor.putBoolean(STARTED_PREF_KEY, true);
-                SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
-                refreshWizardPager();
+               Intent toLogging = new Intent(getContext(), LoggingPage.class);
+                startActivity(toLogging);
+                //final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+                //editor.putBoolean(STARTED_PREF_KEY, true);
+                //SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+                //refreshWizardPager();
                 break;
             case R.id.setup_wizard_welcome_privacy_action:
                 String privacyUrl = getString(R.string.privacy_policy);
