@@ -977,6 +977,8 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
         super.onWindowHidden();
 
         abortCorrectionAndResetPredictionState(true);
+        // solve the problem of saving data when user close the keyboard
+        BiAManager.getInstance(AnyApplication.getAppContext()).endSession();
     }
 
     private void nextAlterKeyboard(EditorInfo currentEditorInfo) {
