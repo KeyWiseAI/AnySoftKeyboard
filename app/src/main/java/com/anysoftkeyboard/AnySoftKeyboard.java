@@ -1143,10 +1143,11 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        Log.i("Conf", "onConfigurationChanged be called");
         if(!BiAManager.getInstance(AnyApplication.getAppContext()).endSession()){
             Log.i("BiAffect", "End Session Failed");
         }else{
-            Log.i("BiAffect", "End Session Successfull");
+            Log.i("BiAffect", "End Session Successfull/ CONFIGUARTION");
         }
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation != mOrientation) {
