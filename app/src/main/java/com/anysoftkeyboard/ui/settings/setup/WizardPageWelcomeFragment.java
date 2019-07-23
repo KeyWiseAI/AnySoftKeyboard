@@ -56,12 +56,12 @@ public class WizardPageWelcomeFragment extends WizardPageBaseFragment implements
         switch (v.getId()) {
 
             case R.id.go_to_start_setup:
-               Intent toLogging = new Intent(getContext(), LoggingPage.class);
+                Intent toLogging = new Intent(getContext(), LoggingPage.class);
                 startActivity(toLogging);
-                //final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-                //editor.putBoolean(STARTED_PREF_KEY, true);
-                //SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
-                //refreshWizardPager();
+//                final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+//                editor.putBoolean(STARTED_PREF_KEY, true);
+//                SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
+//                refreshWizardPager();
                 break;
             case R.id.setup_wizard_welcome_privacy_action:
                 String privacyUrl = getString(R.string.privacy_policy);
