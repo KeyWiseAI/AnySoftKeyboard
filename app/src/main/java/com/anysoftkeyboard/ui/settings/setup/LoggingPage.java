@@ -1,5 +1,8 @@
 package com.anysoftkeyboard.ui.settings.setup;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.SharedPreferencesCompat;
@@ -8,24 +11,26 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+
+import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
 
-public class LoggingPage extends AppCompatActivity {
+public class LoggingPage extends Activity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_logging_page);
-//
-//        final Button button = findViewById(R.id.button);
+
+//        final Button button = (Button) findViewById(R.id.Continue);
 //        button.setOnClickListener(new View.OnClickListener() {
 //            public void onClick(View v) {
-//                final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-//                editor.putBoolean(STARTED_PREF_KEY, true);
-//                SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
-//                refreshWizardPager();
+//
+//                Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
+//                startActivity(toLogging);
 //            }
 //        });
+
     }
 }
