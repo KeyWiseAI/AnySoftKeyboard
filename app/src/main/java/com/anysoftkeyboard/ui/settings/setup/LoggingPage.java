@@ -15,7 +15,7 @@ import android.widget.Button;
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
 
-public class LoggingPage extends Activity {
+public class LoggingPage extends AppCompatActivity {
 
 
     @Override
