@@ -8,18 +8,29 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
 
 public class LoggingPage extends AppCompatActivity {
-
+    public boolean logined = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (this.logined) {
+            String message = "You've successfully logged in";
+            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
+            startActivity(toLogging);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging_page);
 
