@@ -23,7 +23,7 @@ public class LoggingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging_page);
 
-        final Button button = (Button) findViewById(R.id.Continue);
+        final Button button = (Button) findViewById(R.id.btn_login);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,7 +33,7 @@ public class LoggingPage extends AppCompatActivity {
             }
         });
 
-        final Button exit_button = (Button) findViewById(R.id.Exit);
+        final Button exit_button = (Button) findViewById(R.id.btn_exit);
         exit_button.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
