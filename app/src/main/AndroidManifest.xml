@@ -37,7 +37,7 @@
             android:label="@string/ime_name"
             android:launchMode="singleTop"
             android:roundIcon="@mipmap/ic_launcher_round"
-            android:theme="@style/Theme.AskApp">
+            android:theme="@style/Theme.AskApp.NoTitle.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
