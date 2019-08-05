@@ -14,15 +14,17 @@ import android.widget.Button;
 import android.widget.Toast;
 
 
+
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
 
 public class LoggingPage extends AppCompatActivity {
-    public boolean logined = false;
-
+    SharedPreferences spref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (this.logined) {
+        spref = getSharedPreferences("login",MODE_PRIVATE);
+        Boolean logined = spref.getBoolean("logined", false);
+        if (logined) {
             String message = "You've successfully logged in";
             Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -34,11 +36,15 @@ public class LoggingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging_page);
 
+        
+
         final Button button = (Button) findViewById(R.id.btn_login);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                SharedPreferences.Editor editor =  spref.edit();
+                editor.putBoolean("logined", true);
+                editor.commit();
                 Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
                 startActivity(toLogging);
             }
