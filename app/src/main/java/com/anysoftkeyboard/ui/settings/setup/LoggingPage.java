@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
@@ -36,12 +37,32 @@ public class LoggingPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging_page);
 
-        
+        EditText email_edText = (EditText) findViewById(R.id.input_email);
+        EditText password_edText = (EditText) findViewById(R.id.input_password);
+
+
+
 
         final Button button = (Button) findViewById(R.id.btn_login);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String  input_email = email_edText.getText().toString();
+                String  input_password = password_edText.getText().toString();
+                if(input_email.matches("")){
+                    Toast toast = Toast.makeText(getApplicationContext(), "Email should not be empty", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, -130);
+                    toast.show();
+                    return;
+                }
+
+                if(input_password.matches("")){
+                    Toast toast = Toast.makeText(getApplicationContext(), "Password should not be empty", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, -130);
+                    toast.show();
+                    return;
+                }
+
                 SharedPreferences.Editor editor =  spref.edit();
                 editor.putBoolean("logined", true);
                 editor.commit();
