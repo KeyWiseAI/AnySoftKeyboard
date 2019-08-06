@@ -19,6 +19,7 @@ package com.anysoftkeyboard;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.IBinder;
@@ -92,6 +93,8 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
 
     private int mOrientation = Configuration.ORIENTATION_PORTRAIT;
 
+    SharedPreferences spref;
+
     public AnySoftKeyboard() {
         super();
     }
@@ -115,6 +118,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
     @Override
     public void onCreate() {
         super.onCreate();
+        spref = getSharedPreferences("login",MODE_PRIVATE);
         mOrientation = getResources().getConfiguration().orientation;
         if (!BuildConfig.DEBUG && DeveloperUtils.hasTracingRequested(getApplicationContext())) {
             try {
@@ -189,7 +193,11 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
     @Override
     public void onDestroy() {
         Logger.i(TAG, "AnySoftKeyboard has been destroyed! Cleaning resources..");
+        SharedPreferences.Editor editor =  spref.edit();
+        editor.putBoolean("logined", false);
+        editor.commit();
         unregisterReceiver(mPackagesChangedReceiver);
+
 
         final IBinder imeToken = getImeToken();
         if (imeToken != null) mInputMethodManager.hideStatusIcon(imeToken);
