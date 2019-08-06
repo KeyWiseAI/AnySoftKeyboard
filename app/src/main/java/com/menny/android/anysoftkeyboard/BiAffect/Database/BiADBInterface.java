@@ -33,7 +33,7 @@ public interface BiADBInterface {
         //key height
 
         //Api will be to add a call to record the keyDownTime and the associated key code along with all values
-        void insertKeyData(long keyDownTime, int keyCode, float centre_X, float centre_Y, float width, float height);
+        void insertKeyData(long keyDownTime, String keyCode, float centre_X, float centre_Y, float width, float height);
     }
 
 

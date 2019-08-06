@@ -7,7 +7,7 @@ public class KeyDataPOJO {
     boolean used;
     long eventDownTime;
     long eventUpTime;
-    int keyType;
+    String keyType;
     float keyCentre_X;
     float keyCentre_Y;
     float keyWidth;
@@ -21,7 +21,7 @@ public class KeyDataPOJO {
         this.used = false;
         this.eventDownTime=-1;
         this.eventUpTime=-1;
-        this.keyType=Integer.MIN_VALUE;
+        this.keyType=null;
         this.keyCentre_X=-1;
         this.keyCentre_Y=-1;
         this.keyWidth=-1;

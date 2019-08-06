@@ -118,7 +118,7 @@ BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterf
 
     //exposed api for keydata
     @Override
-    public void insertKeyData(long keyDownTime, int keyCode, float centre_X, float centre_Y, float width, float height){
+    public void insertKeyData(long keyDownTime, String keyCode, float centre_X, float centre_Y, float width, float height){
 
         // Creating an object for KeyTypeData entity class and initialising the data members
         // This object will be used as parameter for Room @Insert method

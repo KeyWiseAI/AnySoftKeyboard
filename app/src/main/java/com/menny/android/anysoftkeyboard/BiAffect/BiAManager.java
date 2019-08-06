@@ -246,9 +246,42 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
     //Key data specific calls
     @Override
-    public boolean addKeyDataOnlyDownTime(long eventDownTime, int keyType, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
+    public boolean addKeyDataOnlyDownTime(long eventDownTime, int keyCode, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
         KeyDataPOJO[] temp;
         Semaphore temp_Semaphore;
+
+        // Inorder to protect the users' privacy, instead of saving the keyType code, we save the category of the keyType
+        // Here are the categories of the key codes
+        // Alphanumeric
+        // Numbers
+        // Space
+        // Backspace
+        // Special characters (for example .?!/;()$&@“)
+        // Others (emojis etc)
+        String keyType = null;
+        // Alphanumeric
+        if (keyCode >= 97 && keyCode <= 122) {
+            keyType = new String("Alphanumeric");
+        // Numbers
+        } else if (keyCode >= 48 && keyCode <= 57) {
+            keyType = new String("Numbers");
+        }
+        // Space
+        else if (keyCode == 32) {
+            keyType = new String("Space");
+        // Backspace
+        } else if (keyCode == -5) {
+            keyType = new String("Backspace");
+        // Special characters
+        }
+        else if ((keyCode >= 33 && keyCode <= 47) || (keyCode >= 58 && keyCode <= 64) || (keyCode >= 91 && keyCode <= 96) || (keyCode >= 123 && keyCode <= 126)) {
+            keyType = new String("Punctuations");
+        }
+        // Others
+        else {
+            keyType = new String("Others");
+        }
+
         //assigning correct buffer;
         if(this.bucketk1){
             //t1 is supposed to be used

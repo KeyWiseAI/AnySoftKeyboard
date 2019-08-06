@@ -27,7 +27,7 @@ public class KeyTypeData {
 
     // We do not store the key pressed. Instead we have grouped the keys into different categories - alphanumeric, backspace, autocorrect, suggestion, other. Codes of these categories are stored.
     @NonNull
-    public int keyTypeCode;
+    public String keyTypeCode;
 
     // The centre of the key pressed - X coord
     // In pixels
