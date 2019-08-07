@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
+
+import java.util.regex.Pattern;
 
 public class LoggingPage extends AppCompatActivity {
     SharedPreferences spref;
@@ -56,6 +59,13 @@ public class LoggingPage extends AppCompatActivity {
                     return;
                 }
 
+                if(!isValidEmail(input_email)){
+                    Toast toast = Toast.makeText(getApplicationContext(), "Not a valid email address", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, -130);
+                    toast.show();
+                    return;
+                }
+
                 if(input_password.matches("")){
                     Toast toast = Toast.makeText(getApplicationContext(), "Password should not be empty", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, -130);
@@ -82,5 +92,10 @@ public class LoggingPage extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean isValidEmail(String email) {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
     }
 }
