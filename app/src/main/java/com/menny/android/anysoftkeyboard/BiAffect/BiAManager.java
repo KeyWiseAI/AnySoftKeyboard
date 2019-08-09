@@ -256,7 +256,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Alpha-Numeric
         // Space
         // Backspace
-        // Punctuations (for example .?!/;()$&@“)
+        // Punctuations (!@#$%^&*()".:?/-=+?,.')
         // Others (emojis etc)
 
         // Alpha-Numeric
@@ -269,7 +269,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Backspace
         } else if (keyCode == -5) {
             keyType = new String("Backspace");
-        // Punctuations
+        // Punctuations: !@#$%^&*()".:?/-=+?,.'
         }
         else if ((keyCode >= 33 && keyCode <= 47) || (keyCode >= 58 && keyCode <= 64) || (keyCode >= 91 && keyCode <= 96) || (keyCode >= 123 && keyCode <= 126)) {
             keyType = new String("Punctuations");
