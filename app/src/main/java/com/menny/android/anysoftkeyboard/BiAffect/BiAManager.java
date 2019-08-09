@@ -253,19 +253,15 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
 
         // Inorder to protect the users' privacy, instead of saving the keyType code, we save the category of the keyType
         // Here are the categories of the key codes
-        // Alphanumeric
-        // Numbers
+        // Alpha-Numeric
         // Space
         // Backspace
         // Punctuations (for example .?!/;()$&@“)
         // Others (emojis etc)
 
-        // Alphanumeric
-        if (keyCode >= 97 && keyCode <= 122) {
-            keyType = new String("Alphanumeric");
-        // Numbers
-        } else if (keyCode >= 48 && keyCode <= 57) {
-            keyType = new String("Numbers");
+        // Alpha-Numeric
+        if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 97 && keyCode <= 122)) {
+            keyType = new String("Alpha-Numeric");
         }
         // Space
         else if (keyCode == 32) {
