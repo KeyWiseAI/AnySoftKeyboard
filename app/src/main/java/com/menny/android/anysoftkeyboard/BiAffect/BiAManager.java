@@ -249,6 +249,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     public boolean addKeyDataOnlyDownTime(long eventDownTime, int keyCode, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
         KeyDataPOJO[] temp;
         Semaphore temp_Semaphore;
+        String keyType = null;
 
         // Inorder to protect the users' privacy, instead of saving the keyType code, we save the category of the keyType
         // Here are the categories of the key codes
@@ -256,9 +257,9 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Numbers
         // Space
         // Backspace
-        // Special characters (for example .?!/;()$&@“)
+        // Punctuations (for example .?!/;()$&@“)
         // Others (emojis etc)
-        String keyType = null;
+
         // Alphanumeric
         if (keyCode >= 97 && keyCode <= 122) {
             keyType = new String("Alphanumeric");
@@ -272,7 +273,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Backspace
         } else if (keyCode == -5) {
             keyType = new String("Backspace");
-        // Special characters
+        // Punctuations
         }
         else if ((keyCode >= 33 && keyCode <= 47) || (keyCode >= 58 && keyCode <= 64) || (keyCode >= 91 && keyCode <= 96) || (keyCode >= 123 && keyCode <= 126)) {
             keyType = new String("Punctuations");
