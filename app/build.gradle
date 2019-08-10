@@ -32,7 +32,7 @@ apply from: "${rootDir}/gradle/android_general.gradle"
 android {
     defaultConfig {
         applicationId 'com.menny.android.anysoftkeyboard'
-        minSdkVersion 14
+        minSdkVersion 19
         versionCode versionData.versionCode
         versionName versionData.versionName
 
