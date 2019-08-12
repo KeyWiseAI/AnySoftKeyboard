@@ -193,9 +193,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardIncognito {
     @Override
     public void onDestroy() {
         Logger.i(TAG, "AnySoftKeyboard has been destroyed! Cleaning resources..");
-        SharedPreferences.Editor editor =  spref.edit();
-        editor.putBoolean("logined", false);
-        editor.commit();
+
         unregisterReceiver(mPackagesChangedReceiver);
 
 

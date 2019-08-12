@@ -32,7 +32,7 @@ apply from: "${rootDir}/gradle/android_general.gradle"
 android {
     defaultConfig {
         applicationId 'com.menny.android.anysoftkeyboard'
-        minSdkVersion 14
+        minSdkVersion 19
         versionCode versionData.versionCode
         versionName versionData.versionName
 
@@ -125,6 +125,24 @@ dependencies {
     implementation project(':prefs')
     implementation project(':overlay')
     implementation project(':pixel')
+
+    implementation 'com.github.Sage-Bionetworks.BridgeAndroidSDK:android-sdk:02dfcdb', {
+        exclude group: 'joda-time', module: 'joda-time'
+    }
+    implementation 'org.sagebionetworks.bridge:rest-client:0.16.14', {
+        exclude group: 'joda-time', module: 'joda-time'
+    }
+    implementation 'org.sagebionetworks:BridgeDataUploadUtils:0.2.6', {
+        exclude group: 'joda-time', module: 'joda-time'
+    }
+
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
+    implementation 'io.reactivex:rxjava:1.3.8'
+    api 'net.danlew:android.joda:2.9.9.4'
+
+    implementation 'com.android.support:multidex:1.0.3'
+    api "com.google.dagger:dagger-android:2.21"
+    api "com.google.dagger:dagger-android-support:2.21"
 
     implementation "com.anysoftkeyboard.api:api:$AnySoftKeyboardApiVersion"
     implementation "com.android.support:support-fragment:$supportLibVersion"

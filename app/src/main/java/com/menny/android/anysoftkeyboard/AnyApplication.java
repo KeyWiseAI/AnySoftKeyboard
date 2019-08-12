@@ -16,7 +16,6 @@
 
 package com.menny.android.anysoftkeyboard;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +53,8 @@ import com.anysoftkeyboard.quicktextkeys.QuickTextKeyFactory;
 import com.anysoftkeyboard.theme.KeyboardThemeFactory;
 import com.anysoftkeyboard.ui.tutorials.TutorialsProvider;
 
+import org.sagebionetworks.bridge.android.BridgeApplication;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.subjects.ReplaySubject;
 import io.reactivex.subjects.Subject;
 
-public class AnyApplication extends Application {
+public class AnyApplication extends BridgeApplication {
 
     private static final String TAG = "ASK_APP";
     /**
