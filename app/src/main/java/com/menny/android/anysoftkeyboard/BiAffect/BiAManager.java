@@ -256,8 +256,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Alpha-Numeric
         // Space
         // Backspace
-        // Punctuations (!@#$%^&*()".:?/-=+?,.')
-        // Others (emojis etc)
+        // Punctuations (.?!,:;-[]{}()'")
+        // Symbols (emojis etc)
 
         // Alpha-Numeric
         if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 97 && keyCode <= 122)) {
@@ -269,14 +269,15 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Backspace
         } else if (keyCode == -5) {
             keyType = new String("Backspace");
-        // Punctuations: !@#$%^&*()".:?/-=+?,.'
+        // Punctuations (.?!,:;-[]{}()'")
         }
-        else if ((keyCode >= 33 && keyCode <= 47) || (keyCode >= 58 && keyCode <= 64) || (keyCode >= 91 && keyCode <= 96) || (keyCode >= 123 && keyCode <= 126)) {
+        else if ((keyCode >= 33 && keyCode <= 34) || (keyCode >= 39 && keyCode <= 41) || (keyCode >= 44 && keyCode <= 46) || (keyCode >= 58 && keyCode <= 59)
+                || keyCode == 63 || keyCode == 91 || keyCode == 93 || keyCode == 123 || keyCode == 125) {
             keyType = new String("Punctuations");
         }
-        // Others
+        // Symbols
         else {
-            keyType = new String("Others");
+            keyType = new String("Symbols");
         }
 
         //assigning correct buffer;
