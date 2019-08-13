@@ -8,17 +8,20 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import java.lang.String;
 
-
-
+import com.menny.android.anysoftkeyboard.BiAffect.bridge.BiAffectBridge;
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
+import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
+import rx.Single;
 
 import java.util.regex.Pattern;
 
@@ -32,6 +35,7 @@ public class LoggingPage extends AppCompatActivity {
         spref = getSharedPreferences("login",MODE_PRIVATE);
         // the default value is false
         Boolean logined = spref.getBoolean("logined", false);
+
         //if the user have logged, toss the logining message and jump to the next page directly
         if (logined) {
             String message = "You've successfully logged in";
@@ -56,8 +60,8 @@ public class LoggingPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //get the inputs of email and password
-                String  input_email = email_edText.getText().toString();
-                String  input_password = password_edText.getText().toString();
+                String input_email = email_edText.getText().toString();
+                String input_password = password_edText.getText().toString();
                 // reject the empty email
                 if(input_email.matches("")){
                     Toast toast = Toast.makeText(getApplicationContext(), "Email should not be empty", Toast.LENGTH_SHORT);
@@ -81,6 +85,30 @@ public class LoggingPage extends AppCompatActivity {
                     return;
                 }
 
+//                BiAffectBridge.getInstance()
+//                .logIn( input_email, input_password )
+//                .subscribe(
+//                        userSessionInfo -> {
+////                            SharedPreferences.Editor editor =  spref.edit();
+////                            editor.putBoolean("logined", true);
+////                            editor.commit();
+//                            //if both the email and password are valid, change "login" to false
+//                            SharedPreferences.Editor editor =  spref.edit();
+//                            editor.putBoolean("logined", true);
+//                            editor.commit();
+//                            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
+//                            startActivity(toLogging);
+//                            Log.d("success","success! move on to the next screen");
+//                        }, throwable -> {
+////                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
+//
+//                            SharedPreferences.Editor editor =  spref.edit();
+//                            editor.putBoolean("logined", false);
+//                            editor.commit();
+//                            Log.d("error", "error, show a dialog to the user");
+////                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
+//                        } );
+                
                 //if both the email and password are valid, change "login" to false
                 SharedPreferences.Editor editor =  spref.edit();
                 editor.putBoolean("logined", true);
