@@ -89,37 +89,30 @@ public class LoggingPage extends AppCompatActivity {
                 .logIn( input_email, input_password )
                 .subscribe(
                         userSessionInfo -> {
-//                            SharedPreferences.Editor editor =  spref.edit();
-//                            editor.putBoolean("logined", true);
-//                            editor.commit();
                             Log.d("success","success! move on to the next screen");
                             //if both the email and password are valid, change "login" to true
                             SharedPreferences.Editor editor =  spref.edit();
                             editor.putBoolean("logined", true);
                             editor.commit();
                             String message = "You've successfully logged in";
-//                            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-//                            toast.setGravity(Gravity.CENTER, 0, 0);
-//                            toast.show();
+                            // login successfully, jump to the next page
                             Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
                             toLogging.putExtra("successMsg", message);
                             startActivity(toLogging);
                         }, throwable -> {
-//                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
-
+                            // login failed
+                            // TODO: show the error message to the user
+                            // TODO: solve the problem of wrong failed message
+                            String message = throwable.getMessage();
                             SharedPreferences.Editor editor =  spref.edit();
                             editor.putBoolean("logined", false);
                             editor.commit();
-                            Log.d("error", "error, show a dialog to the user");
+                            Log.d("login error", message);
+//                            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+//                            toast.setGravity(Gravity.CENTER, 0, 0);
+//                            toast.show();
 //                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
                         } );
-                
-                //if both the email and password are valid, change "login" to false
-//                SharedPreferences.Editor editor =  spref.edit();
-//                editor.putBoolean("logined", true);
-//                editor.commit();
-//                Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-//                startActivity(toLogging);
             }
         });
 
