@@ -85,36 +85,41 @@ public class LoggingPage extends AppCompatActivity {
                     return;
                 }
 
-//                BiAffectBridge.getInstance()
-//                .logIn( input_email, input_password )
-//                .subscribe(
-//                        userSessionInfo -> {
-////                            SharedPreferences.Editor editor =  spref.edit();
-////                            editor.putBoolean("logined", true);
-////                            editor.commit();
-//                            //if both the email and password are valid, change "login" to false
+                BiAffectBridge.getInstance()
+                .logIn( input_email, input_password )
+                .subscribe(
+                        userSessionInfo -> {
 //                            SharedPreferences.Editor editor =  spref.edit();
 //                            editor.putBoolean("logined", true);
 //                            editor.commit();
-//                            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-//                            startActivity(toLogging);
-//                            Log.d("success","success! move on to the next screen");
-//                        }, throwable -> {
-////                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
-//
-//                            SharedPreferences.Editor editor =  spref.edit();
-//                            editor.putBoolean("logined", false);
-//                            editor.commit();
-//                            Log.d("error", "error, show a dialog to the user");
-////                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
-//                        } );
+                            Log.d("success","success! move on to the next screen");
+                            //if both the email and password are valid, change "login" to true
+                            SharedPreferences.Editor editor =  spref.edit();
+                            editor.putBoolean("logined", true);
+                            editor.commit();
+                            String message = "You've successfully logged in";
+//                            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+//                            toast.setGravity(Gravity.CENTER, 0, 0);
+//                            toast.show();
+                            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
+                            toLogging.putExtra("successMsg", message);
+                            startActivity(toLogging);
+                        }, throwable -> {
+//                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
+
+                            SharedPreferences.Editor editor =  spref.edit();
+                            editor.putBoolean("logined", false);
+                            editor.commit();
+                            Log.d("error", "error, show a dialog to the user");
+//                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
+                        } );
                 
                 //if both the email and password are valid, change "login" to false
-                SharedPreferences.Editor editor =  spref.edit();
-                editor.putBoolean("logined", true);
-                editor.commit();
-                Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-                startActivity(toLogging);
+//                SharedPreferences.Editor editor =  spref.edit();
+//                editor.putBoolean("logined", true);
+//                editor.commit();
+//                Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
+//                startActivity(toLogging);
             }
         });
 
