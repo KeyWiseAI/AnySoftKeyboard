@@ -18,6 +18,7 @@ package com.anysoftkeyboard.keyboards.views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -40,20 +42,26 @@ import android.view.View;
 import com.anysoftkeyboard.addons.AddOn;
 import com.anysoftkeyboard.base.utils.Logger;
 import com.anysoftkeyboard.ime.AnySoftKeyboardSuggestions;
+import com.anysoftkeyboard.keyboards.Keyboard;
 import com.anysoftkeyboard.overlay.OverlayData;
 import com.anysoftkeyboard.overlay.ThemeOverlayCombiner;
 import com.anysoftkeyboard.overlay.ThemeResourcesHolder;
 import com.anysoftkeyboard.rx.GenericOnError;
 import com.anysoftkeyboard.theme.KeyboardTheme;
 import com.menny.android.anysoftkeyboard.AnyApplication;
+import com.menny.android.anysoftkeyboard.BiAffect.BiAManager;
 import com.menny.android.anysoftkeyboard.R;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
+
+import static com.anysoftkeyboard.keyboards.views.AnyKeyboardViewBase.NOT_A_KEY;
 
 public class CandidateView extends View implements ThemeableChild {
 
@@ -461,7 +469,34 @@ public class CandidateView extends View implements ThemeableChild {
                             mService.addWordToDictionary(word.toString());
                         }
                     } else if (!mNoticing) {
+                        Logger.d("psm", "candidateview464");
+
+
+                        // save autosuggestion touchtype data
+                        final int index = MotionEventCompat.getActionIndex(me);
+                        long eventDownTime;
+                        int pointerId;
+                        HashMap<Integer, Long> idToDownTimeMap = new HashMap<>();
+                        pointerId = me.getPointerId(index);
+                        idToDownTimeMap.put(pointerId,me.getEventTime());
+                        eventDownTime = idToDownTimeMap.get(pointerId);
+                        BiAManager.getInstance(AnyApplication.getAppContext()).addMasterEntry(eventDownTime, me.getEventTime(), action, me.getPressure(index),
+                                me.getX(index), me.getY(index), me.getTouchMajor(index), me.getTouchMinor(index), me.getPointerCount());
+
+//                        final Resources res = getResources();
+//                        //final float slide = res.getDimension(R.dimen.);
+//                       // Resources res = getResources();
+//                        //float slide = res.getDimension(R.dimen.mini_keyboard_slide_allowance);
+//                        KeyDetector  mKeyDector = new MiniKeyboardKeyDetector(100);
+//                        KeyState mKeyState = new KeyState(mKeyDector);
+//                        int keyIndex = mKeyState.onDownKey(x, y);
+
+//                        Keyboard.Key temp = getKey(keyIndex);
+                        BiAManager.getInstance(AnyApplication.getAppContext()).addKeyDataOnlyAuto(eventDownTime);
+//
+//
                         mService.pickSuggestionManually(mSelectedIndex, mSelectedString);
+
                     } else if (mSelectedIndex == 1 && !TextUtils.isEmpty(mJustAddedWord)) {
                         // 1 is the index of "Remove?"
                         Logger.d(TAG, "User wants to remove an added word '%s'", mJustAddedWord);
@@ -475,6 +510,14 @@ public class CandidateView extends View implements ThemeableChild {
                 break;
         }
         return true;
+    }
+
+    private Keyboard.Key[] mKeys;
+    public Keyboard.Key getKey(int keyIndex) {
+        return isValidKeyIndex(keyIndex) ? mKeys[keyIndex] : null;
+    }
+    private boolean isValidKeyIndex(int keyIndex) {
+        return keyIndex >= 0 && keyIndex < mKeys.length;
     }
 
     public void notifyAboutWordAdded(CharSequence word) {
@@ -559,6 +602,68 @@ public class CandidateView extends View implements ThemeableChild {
             // hidePreview();
             invalidate();
             return true;
+        }
+    }
+    private static class KeyState {
+        private final KeyDetector mKeyDetector;
+
+        // The current key index where this pointer is.
+        private int mKeyIndex = NOT_A_KEY;
+        // The position where mKeyIndex was recognized for the first time.
+        private int mKeyX;
+        private int mKeyY;
+
+        // Last pointer position.
+        private int mLastX;
+        private int mLastY;
+
+        KeyState(KeyDetector keyDetector) {
+            mKeyDetector = keyDetector;
+        }
+
+        int getKeyIndex() {
+            return mKeyIndex;
+        }
+
+        int getKeyX() {
+            return mKeyX;
+        }
+
+        int getKeyY() {
+            return mKeyY;
+        }
+
+        int getLastX() {
+            return mLastX;
+        }
+
+        int getLastY() {
+            return mLastY;
+        }
+
+        int onDownKey(int x, int y) {
+            return onMoveToNewKey(onMoveKeyInternal(x, y), x, y);
+        }
+
+        private int onMoveKeyInternal(int x, int y) {
+            mLastX = x;
+            mLastY = y;
+            return mKeyDetector.getKeyIndexAndNearbyCodes(x, y, null);
+        }
+
+        int onMoveKey(int x, int y) {
+            return onMoveKeyInternal(x, y);
+        }
+
+        int onMoveToNewKey(int keyIndex, int x, int y) {
+            mKeyIndex = keyIndex;
+            mKeyX = x;
+            mKeyY = y;
+            return keyIndex;
+        }
+//
+        int onUpKey(int x, int y) {
+            return onMoveKeyInternal(x, y);
         }
     }
 }

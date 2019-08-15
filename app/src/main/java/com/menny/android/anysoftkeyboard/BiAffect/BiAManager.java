@@ -244,6 +244,18 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         return true;
     }
 
+    public boolean addlog(long eventDownTime, long eventTime, int eventAction, float pressure, float x_cord, float y_cord, float major_axis, float minor_axis, int touches){
+        Log.d("Autosuggestion", "eventDownTime:" + eventDownTime);
+        Log.d("Autosuggestion", "eventAction:" + eventAction);
+        Log.d("Autosuggestion", "pressure:" + pressure);
+        Log.d("Autosuggestion", "x_cord" + x_cord);
+        Log.d("Autosuggestion", "y_cord:" + y_cord);
+        Log.d("Autosuggestion", "major_axis:" + major_axis);
+        Log.d("Autosuggestion", "minor_axis" + minor_axis);
+
+       return true;
+    }
+
     //Key data specific calls
     @Override
     public boolean addKeyDataOnlyDownTime(long eventDownTime, int keyCode, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
@@ -333,4 +345,75 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         }
         return false;
     }
+
+    public boolean addKeyDataOnlyAuto(long eventDownTime) {
+        KeyDataPOJO[] temp;
+        Semaphore temp_Semaphore;
+        String keyType = null;
+
+        // Inorder to protect the users' privacy, instead of saving the keyType code, we save the category of the keyType
+        // Here are the categories of the key codes
+        // Alpha-Numeric
+        // Space
+        // Backspace
+        // Punctuations (.?!,:;-[]{}()'")
+        // Symbols (emojis etc)
+
+        // Alpha-Numeric
+            keyType = new String("Autosuggestion");
+
+
+
+        //assigning correct buffer;
+        if(this.bucketk1){
+            //t1 is supposed to be used
+            temp = this.k1;
+            temp_Semaphore = k1_Semaphore;
+        }else{
+            temp = this.k2;
+            temp_Semaphore = k2_Semaphore;
+        }
+        //Lock the semaphore
+        try {
+            temp_Semaphore.acquire();
+            temp[currentIndexKey].eventDownTime = eventDownTime + offset;
+            temp[currentIndexKey].eventUpTime = 0 + offset;
+            temp[currentIndexKey].keyType = keyType;
+
+            temp[currentIndexKey].used = true;
+            Log.i("CS_BiAffect_K","---------------------------------");
+            Log.i("CS_BiAffect_K","Index->"+currentIndexKey);
+            temp[currentIndexKey].printYourself();
+            Log.i("CS_BiAffect_K","---------------------------------");
+
+        }catch (InterruptedException e){
+            Log.i("CS_BiAffect_K", "failed to acquire lock on semaphore");
+        }finally {
+            temp_Semaphore.release();
+            if(temp[currentIndexKey].used){
+                if(currentIndexKey == KEY_BUFFER_SIZE-1){
+                    //Time to switch the key buffer
+                    Log.i("CS_BiAffect_K","-----------KEY BUFFER CHANGE-------------"+this.bucketk1);
+                    //We can kickoff a worker thread from here to take all the pojos and insert it into the database
+                    //We will pass the number of the last buffer being used and then expect the thread to infer from that which one
+                    //needs to be emptied
+                    Thread t = new Thread(new KeyDataWorker(this.bucketk1, mBiADatabaseManager));
+                    t.start();
+                    //Time to change the buffer and put all the things in the second from next
+                    this.currentIndexKey = 0;
+                    if(this.bucketk1){
+                        bucketk1=false;
+                    }else{
+                        bucketk1=true;
+                    }
+                }else{
+                    currentIndexKey++;
+                }
+            }
+
+        }
+        return false;
+    }
+
+
 }

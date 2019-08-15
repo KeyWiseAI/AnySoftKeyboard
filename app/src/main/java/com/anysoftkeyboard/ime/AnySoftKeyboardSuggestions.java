@@ -743,6 +743,7 @@ public abstract class AnySoftKeyboardSuggestions extends AnySoftKeyboardKeyboard
         ic.endBatchEdit();
 
         setSuggestions(mSuggest.getNextSuggestions(mCommittedWord, false), false, false, false);
+        Logger.d("mCommittedWord", "text");
     }
 
     protected void setDictionariesForCurrentKeyboard() {
@@ -978,11 +979,13 @@ public abstract class AnySoftKeyboardSuggestions extends AnySoftKeyboardKeyboard
     }
 
     public void pickSuggestionManually(int index, CharSequence suggestion) {
+        Logger.d("psm", "ASsuggestion981");
         pickSuggestionManually(index, suggestion, mAutoSpace);
     }
 
     @CallSuper
     public void pickSuggestionManually(int index, CharSequence suggestion, boolean withAutoSpaceEnabled) {
+        Logger.d("psm", "ASsuggestion988");
         final String typedWord = mWord.getTypedWord().toString();
 
         final InputConnection ic = getCurrentInputConnection();
@@ -999,13 +1002,14 @@ public abstract class AnySoftKeyboardSuggestions extends AnySoftKeyboardKeyboard
                     ic.commitCompletion(ci);
                 }
                 mCommittedWord = suggestion;
+                Logger.d("mCommittedWord", "suggestion");
                 if (mCandidateView != null) {
                     mCandidateView.clear();
                 }
                 return;
             }
             commitWordToInput(suggestion, false/*user physically picked a word from the suggestions strip. this is not a fix*/);
-
+            Logger.d("CommittedWordtoinput", "1012");
             TextEntryState.acceptedSuggestion(mWord.getTypedWord(), suggestion);
             // Follow it with a space
             if (withAutoSpaceEnabled && (index == 0 || !mWord.isAtTagsSearchState())) {
@@ -1066,6 +1070,7 @@ public abstract class AnySoftKeyboardSuggestions extends AnySoftKeyboardKeyboard
             }
         }
         mCommittedWord = wordToCommit;
+        Logger.d("mCommittedWord", "wordToCommit");
         mUndoCommitCursorPosition = UNDO_COMMIT_WAITING_TO_RECORD_POSITION;
 
         clearSuggestions();

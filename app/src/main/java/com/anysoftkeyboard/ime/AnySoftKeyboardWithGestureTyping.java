@@ -298,6 +298,7 @@ public abstract class AnySoftKeyboardWithGestureTyping extends AnySoftKeyboardWi
     private void confirmLastGesture(boolean withAutoSpace) {
         if (TextEntryState.getState() == TextEntryState.State.PERFORMED_GESTURE) {
             pickSuggestionManually(0, mWord.getTypedWord(), withAutoSpace);
+
         }
     }
 
