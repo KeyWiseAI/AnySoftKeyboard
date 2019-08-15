@@ -1,20 +1,38 @@
 package com.anysoftkeyboard.ui.settings.setup;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
 
 public class ConsentPage extends AppCompatActivity {
     WebView webView;
+    SharedPreferences spref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //TODO: Solve the auto login bug
+//        spref = getSharedPreferences("login",MODE_PRIVATE);
+//        Boolean logined = spref.getBoolean("logined", false);
+//        if (logined) {
+//            String message = "You've successfully logged in";
+//            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+//            toast.setGravity(Gravity.CENTER, 0, 0);
+//            toast.show();
+//            Intent toLogging = new Intent(ConsentPage.this, LoggingPage.class);
+//            startActivity(toLogging);
+//            Log.d("test", "logined in");
+//        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consent_page);
         // init webView

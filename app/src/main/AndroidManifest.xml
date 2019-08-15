@@ -49,7 +49,7 @@
             android:name="com.anysoftkeyboard.ui.settings.setup.LoggingPage"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskApp.NoTitle.NoActionBar">
             <!--<intent-filter>-->

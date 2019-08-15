@@ -1,10 +1,14 @@
 package com.anysoftkeyboard.ui.settings.setup;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,14 +41,14 @@ public class LoggingPage extends AppCompatActivity {
         Boolean logined = spref.getBoolean("logined", false);
 
         //if the user have logged, toss the logining message and jump to the next page directly
-        if (logined) {
-            String message = "You've successfully logged in";
-            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-            startActivity(toLogging);
-        }
+//        if (logined) {
+//            String message = "You've successfully logged in";
+//            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+//            toast.setGravity(Gravity.CENTER, 0, 0);
+//            toast.show();
+//            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
+//            startActivity(toLogging);
+//        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging_page);
@@ -88,31 +92,49 @@ public class LoggingPage extends AppCompatActivity {
                 BiAffectBridge.getInstance()
                 .logIn( input_email, input_password )
                 .subscribe(
+                        // login successfully
                         userSessionInfo -> {
-                            Log.d("success","success! move on to the next screen");
                             //if both the email and password are valid, change "login" to true
                             SharedPreferences.Editor editor =  spref.edit();
                             editor.putBoolean("logined", true);
                             editor.commit();
-                            String message = "You've successfully logged in";
+                            String SuccessMsg = "You've successfully logged in";
                             // login successfully, jump to the next page
                             Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-                            toLogging.putExtra("successMsg", message);
+                            toLogging.putExtra("successMsg", SuccessMsg);
                             startActivity(toLogging);
+
+                            Log.d("success","success! move on to the next screen");
+                        // login failed
                         }, throwable -> {
-                            // login failed
-                            // TODO: show the error message to the user
-                            // TODO: solve the problem of wrong failed message
-                            String message = throwable.getMessage();
+                            // get the error message from backend
+                            String errorMsg = throwable.getMessage();
+                            ErrorMsgDialogFragment dialog = new ErrorMsgDialogFragment();
+                            // handle the error message
+                            switch (errorMsg) {
+                                case "Account not found.":
+                                    errorMsg = "Wrong email or password";
+                                    break;
+                                case "Unable to resolve host \"webservices.sagebridge.org\": No address associated with hostname":
+                                    errorMsg = "Internet Error, please check your internet connection";
+                                    break;
+                                default:
+                                    errorMsg = "Unknown Error";
+                            }
+                            // use setArguments to pass the error message to the dialog
+                            Bundle args = new Bundle();
+                            args.putString("msgName", errorMsg);
+                            dialog.setArguments(args);
+                            // show the dialog to the user
+                            dialog.show(getSupportFragmentManager(), "errorMsg");
+                            // update the shared preference
                             SharedPreferences.Editor editor =  spref.edit();
                             editor.putBoolean("logined", false);
                             editor.commit();
-                            Log.d("login error", message);
-//                            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-//                            toast.setGravity(Gravity.CENTER, 0, 0);
-//                            toast.show();
-//                            Toast.makeText(LoggingPage.this, "Error message", Toast.LENGTH_SHORT).show();
+
+                            Log.d("login error", errorMsg);
                         } );
+
             }
         });
 
@@ -141,4 +163,21 @@ public class LoggingPage extends AppCompatActivity {
     public static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
             "(?:[a-z0-9A-Z!#$%&'*+/=?^_`{|}~-]{1,64}+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
    );
+
+    // use DialogFragment class to show the error message
+    public static class ErrorMsgDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            // get the content of error message
+            builder.setMessage(getArguments().getString("msgName"))
+                    .setNegativeButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ErrorMsgDialogFragment.this.getDialog().cancel();
+                        }
+                    });
+            return builder.create();
+        }
+    }
 }
