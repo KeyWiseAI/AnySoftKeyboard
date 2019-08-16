@@ -346,21 +346,11 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         return false;
     }
 
-    public boolean addKeyDataOnlyAuto(long eventDownTime) {
+    public boolean addKeyDataOnlyAuto(long eventDownTime, float keyCentre_X, float keyCentre_Y, float keyWidth, float keyHeight) {
         KeyDataPOJO[] temp;
         Semaphore temp_Semaphore;
-        String keyType = null;
+        String keyType = "AutoSuggestion";
 
-        // Inorder to protect the users' privacy, instead of saving the keyType code, we save the category of the keyType
-        // Here are the categories of the key codes
-        // Alpha-Numeric
-        // Space
-        // Backspace
-        // Punctuations (.?!,:;-[]{}()'")
-        // Symbols (emojis etc)
-
-        // Alpha-Numeric
-            keyType = new String("Autosuggestion");
 
 
 
@@ -379,12 +369,15 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             temp[currentIndexKey].eventDownTime = eventDownTime + offset;
             temp[currentIndexKey].eventUpTime = 0 + offset;
             temp[currentIndexKey].keyType = keyType;
-
+            temp[currentIndexKey].keyCentre_X = keyCentre_X;
+            temp[currentIndexKey].keyCentre_Y = keyCentre_Y;
+            temp[currentIndexKey].keyWidth = keyWidth;
+            temp[currentIndexKey].keyHeight = keyHeight;
             temp[currentIndexKey].used = true;
             Log.i("CS_BiAffect_K","---------------------------------");
             Log.i("CS_BiAffect_K","Index->"+currentIndexKey);
             temp[currentIndexKey].printYourself();
-            Log.i("CS_BiAffect_K","---------------------------------");
+
 
         }catch (InterruptedException e){
             Log.i("CS_BiAffect_K", "failed to acquire lock on semaphore");

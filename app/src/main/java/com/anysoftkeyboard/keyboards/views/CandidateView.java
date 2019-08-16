@@ -35,6 +35,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -74,6 +75,7 @@ public class CandidateView extends View implements ThemeableChild {
     private final int[] mWordX = new int[MAX_SUGGESTIONS];
     private static final int SCROLL_PIXELS = 20;
     private final ArrayList<CharSequence> mSuggestions = new ArrayList<>();
+    private final int[] totallength = new int[MAX_SUGGESTIONS];
     private final Drawable mSelectionHighlight;
     private float mHorizontalGap;
     private final ThemeOverlayCombiner mThemeOverlayCombiner = new ThemeOverlayCombiner();
@@ -265,6 +267,7 @@ public class CandidateView extends View implements ThemeableChild {
 
         final ThemeResourcesHolder themeResources = mThemeOverlayCombiner.getThemeResources();
         int x = 0;
+
         for (int i = 0; i < count; i++) {
             CharSequence suggestion = mSuggestions.get(i);
             if (suggestion == null) {
@@ -294,6 +297,12 @@ public class CandidateView extends View implements ThemeableChild {
                 wordWidth = (int) (textWidth + mHorizontalGap * 2);
                 mWordWidth[i] = wordWidth;
             }
+
+            if(i == 0) totallength[i] = wordWidth;
+            else totallength[i] = totallength[i-1] + wordWidth;
+
+           // Log.d("Totallength", ""+totallength[i]);
+
 
             mWordX[i] = x;
 
@@ -469,8 +478,9 @@ public class CandidateView extends View implements ThemeableChild {
                             mService.addWordToDictionary(word.toString());
                         }
                     } else if (!mNoticing) {
-                        Logger.d("psm", "candidateview464");
-
+                        // we only save data when user select word from autosuggestion
+                        //since the word is saved only when Action_up is fired.
+                        //We only put our probe here, not both Action_up and Action_down.
 
                         // save autosuggestion touchtype data
                         final int index = MotionEventCompat.getActionIndex(me);
@@ -483,18 +493,13 @@ public class CandidateView extends View implements ThemeableChild {
                         BiAManager.getInstance(AnyApplication.getAppContext()).addMasterEntry(eventDownTime, me.getEventTime(), action, me.getPressure(index),
                                 me.getX(index), me.getY(index), me.getTouchMajor(index), me.getTouchMinor(index), me.getPointerCount());
 
-//                        final Resources res = getResources();
-//                        //final float slide = res.getDimension(R.dimen.);
-//                       // Resources res = getResources();
-//                        //float slide = res.getDimension(R.dimen.mini_keyboard_slide_allowance);
-//                        KeyDetector  mKeyDector = new MiniKeyboardKeyDetector(100);
-//                        KeyState mKeyState = new KeyState(mKeyDector);
-//                        int keyIndex = mKeyState.onDownKey(x, y);
+                        // save autosuggestion keytype data
+                       float  keyCentre_X = totallength[mSelectedIndex- 1] + mWordWidth[mSelectedIndex]/2;
+                       float keyCentre_Y = getTop() + getHeight()/2;
+                       float keyWidth = mWordWidth[mSelectedIndex];
+                       float keyHeight = getHeight();
 
-//                        Keyboard.Key temp = getKey(keyIndex);
-                        BiAManager.getInstance(AnyApplication.getAppContext()).addKeyDataOnlyAuto(eventDownTime);
-//
-//
+                        BiAManager.getInstance(AnyApplication.getAppContext()).addKeyDataOnlyAuto(eventDownTime, keyCentre_X, keyCentre_Y, keyWidth, keyHeight);
                         mService.pickSuggestionManually(mSelectedIndex, mSelectedString);
 
                     } else if (mSelectedIndex == 1 && !TextUtils.isEmpty(mJustAddedWord)) {
@@ -512,13 +517,6 @@ public class CandidateView extends View implements ThemeableChild {
         return true;
     }
 
-    private Keyboard.Key[] mKeys;
-    public Keyboard.Key getKey(int keyIndex) {
-        return isValidKeyIndex(keyIndex) ? mKeys[keyIndex] : null;
-    }
-    private boolean isValidKeyIndex(int keyIndex) {
-        return keyIndex >= 0 && keyIndex < mKeys.length;
-    }
 
     public void notifyAboutWordAdded(CharSequence word) {
         mJustAddedWord = word;
@@ -604,66 +602,5 @@ public class CandidateView extends View implements ThemeableChild {
             return true;
         }
     }
-    private static class KeyState {
-        private final KeyDetector mKeyDetector;
 
-        // The current key index where this pointer is.
-        private int mKeyIndex = NOT_A_KEY;
-        // The position where mKeyIndex was recognized for the first time.
-        private int mKeyX;
-        private int mKeyY;
-
-        // Last pointer position.
-        private int mLastX;
-        private int mLastY;
-
-        KeyState(KeyDetector keyDetector) {
-            mKeyDetector = keyDetector;
-        }
-
-        int getKeyIndex() {
-            return mKeyIndex;
-        }
-
-        int getKeyX() {
-            return mKeyX;
-        }
-
-        int getKeyY() {
-            return mKeyY;
-        }
-
-        int getLastX() {
-            return mLastX;
-        }
-
-        int getLastY() {
-            return mLastY;
-        }
-
-        int onDownKey(int x, int y) {
-            return onMoveToNewKey(onMoveKeyInternal(x, y), x, y);
-        }
-
-        private int onMoveKeyInternal(int x, int y) {
-            mLastX = x;
-            mLastY = y;
-            return mKeyDetector.getKeyIndexAndNearbyCodes(x, y, null);
-        }
-
-        int onMoveKey(int x, int y) {
-            return onMoveKeyInternal(x, y);
-        }
-
-        int onMoveToNewKey(int keyIndex, int x, int y) {
-            mKeyIndex = keyIndex;
-            mKeyX = x;
-            mKeyY = y;
-            return keyIndex;
-        }
-//
-        int onUpKey(int x, int y) {
-            return onMoveKeyInternal(x, y);
-        }
-    }
 }
