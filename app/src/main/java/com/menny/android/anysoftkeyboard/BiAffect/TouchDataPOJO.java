@@ -6,7 +6,7 @@ public class TouchDataPOJO{
     boolean used;
     long eventDownTime;
     long eventTime;
-    int eventAction;
+    String eventAction;
     float pressure;
     float x_cord;
     float y_cord;
@@ -26,7 +26,7 @@ public class TouchDataPOJO{
         this.used = false;
         this.eventDownTime=0;
         this.eventTime=0;
-        this.eventAction=-1;
+        this.eventAction=null;
         this.pressure = 0.0f;
         this.x_cord = 0.0f;
         this.y_cord = 0.0f;
@@ -41,7 +41,7 @@ public class TouchDataPOJO{
     }
 
     public boolean validatePOJO(){
-        return (this.used && this.eventAction!=-1 && this.touches!=-1);
+        return (this.used && this.eventAction!=null && this.touches!=-1);
     }
 
     public void printYourself(){

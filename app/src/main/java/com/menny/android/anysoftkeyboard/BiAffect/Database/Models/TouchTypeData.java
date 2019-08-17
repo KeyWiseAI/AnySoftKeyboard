@@ -29,7 +29,7 @@ public class TouchTypeData {
 
     // stores the code for type of motion event action that was fired at that key press. 0 for ACTION_DOWN, 2 for ACTION_MOVE, 1 for ACTION_UP
     @NonNull
-    public int eventAction;
+    public String eventAction;
 
     // stores the pressure of key press recorded at the moment the event action in question was fired.
     @NonNull

@@ -195,12 +195,23 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
             temp_Semaphore = t2_Sempahore;
         }
 
+        String event = "";
+        if(eventAction == 0){
+            event = "Action_Down";
+        }
+        else if(eventAction == 1){
+            event = "Action_Up";
+        }
+        else{
+            event = "Action_Move";
+        }
+
         //lock the buffer, if lock fails, there is something wrong with the code
         try {
             temp_Semaphore.acquire();
             temp[currentIndex].eventDownTime = eventDownTime + offset;
             temp[currentIndex].eventTime = eventTime + offset;
-            temp[currentIndex].eventAction = eventAction;
+            temp[currentIndex].eventAction = event;
             temp[currentIndex].pressure = pressure;
             temp[currentIndex].x_cord = x_cord;
             temp[currentIndex].y_cord = y_cord;

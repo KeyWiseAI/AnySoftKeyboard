@@ -17,7 +17,7 @@ public interface BiADBInterface {
         //minor axis
 
         // Currently according to design, single insert works efficiently. thus only this implemented.
-        void insertTouchData(long eventDownTime, long eventTime, int eventAction,
+        void insertTouchData(long eventDownTime, long eventTime, String eventAction,
          float pressure, float x_cord, float y_cord, float majorAxis, float minorAxis);
     }
 

@@ -90,7 +90,7 @@ BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterf
 
     //exposed Api for touch data
     @Override
-    public void insertTouchData(long eventDownTime, long eventTime, int eventAction, float pressure, float x_cord, float y_cord, float majorAxis, float minorAxis){
+    public void insertTouchData(long eventDownTime, long eventTime, String eventAction, float pressure, float x_cord, float y_cord, float majorAxis, float minorAxis){
 
         // Creating an object for TouchTypeData entity class and initialising the data members
         // This object will be used as parameter for Room @Insert method
