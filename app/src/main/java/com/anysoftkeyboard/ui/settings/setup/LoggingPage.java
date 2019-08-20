@@ -6,10 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.SharedPreferencesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,32 +29,14 @@ import java.util.regex.Pattern;
 import static android.util.Patterns.EMAIL_ADDRESS;
 
 public class LoggingPage extends AppCompatActivity {
-    SharedPreferences spref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // used the boolean 'login' to check if the user have logged or not.
-        spref = getSharedPreferences("login",MODE_PRIVATE);
-        // the default value is false
-        Boolean logined = spref.getBoolean("logined", false);
-
-        //if the user have logged, toss the logining message and jump to the next page directly
-//        if (logined) {
-//            String message = "You've successfully logged in";
-//            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-//            toast.setGravity(Gravity.CENTER, 0, 0);
-//            toast.show();
-//            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-//            startActivity(toLogging);
-//        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logging_page);
 
         EditText email_edText = (EditText) findViewById(R.id.input_email);
         EditText password_edText = (EditText) findViewById(R.id.input_password);
-
-
-
 
         final Button button = (Button) findViewById(R.id.btn_login);
         button.setOnClickListener(new View.OnClickListener() {
@@ -88,53 +67,8 @@ public class LoggingPage extends AppCompatActivity {
                     toast.show();
                     return;
                 }
-
-                BiAffectBridge.getInstance()
-                .logIn( input_email, input_password )
-                .subscribe(
-                        // login successfully
-                        userSessionInfo -> {
-                            //if both the email and password are valid, change "login" to true
-                            SharedPreferences.Editor editor =  spref.edit();
-                            editor.putBoolean("logined", true);
-                            editor.commit();
-                            String SuccessMsg = "You've successfully logged in";
-                            // login successfully, jump to the next page
-                            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-                            toLogging.putExtra("successMsg", SuccessMsg);
-                            startActivity(toLogging);
-
-                            Log.d("success","success! move on to the next screen");
-                        // login failed
-                        }, throwable -> {
-                            // get the error message from backend
-                            String errorMsg = throwable.getMessage();
-                            ErrorMsgDialogFragment dialog = new ErrorMsgDialogFragment();
-                            // handle the error message
-                            switch (errorMsg) {
-                                case "Account not found.":
-                                    errorMsg = "Wrong email or password";
-                                    break;
-                                case "Unable to resolve host \"webservices.sagebridge.org\": No address associated with hostname":
-                                    errorMsg = "Internet Error, please check your internet connection";
-                                    break;
-                                default:
-                                    errorMsg = "Unknown Error";
-                            }
-                            // use setArguments to pass the error message to the dialog
-                            Bundle args = new Bundle();
-                            args.putString("msgName", errorMsg);
-                            dialog.setArguments(args);
-                            // show the dialog to the user
-                            dialog.show(getSupportFragmentManager(), "errorMsg");
-                            // update the shared preference
-                            SharedPreferences.Editor editor =  spref.edit();
-                            editor.putBoolean("logined", false);
-                            editor.commit();
-
-                            Log.d("login error", errorMsg);
-                        } );
-
+                // use the bridge sdk to sign in
+                signIn(input_email, input_password);
             }
         });
 
@@ -156,6 +90,48 @@ public class LoggingPage extends AppCompatActivity {
     private boolean isValidEmail(String email) {
         Pattern pattern = EMAIL_ADDRESS_PATTERN;
         return pattern.matcher(email).matches();
+    }
+
+    // sign in function
+    private void signIn(String email, String password) {
+
+        // Use Bridge to login
+        BiAffectBridge.getInstance()
+                .logIn( email, password )
+                .subscribe(
+                        // login successfully
+                        userSessionInfo -> {
+                            String SuccessMsg = "You've successfully logged in";
+                            // login successfully, use intent to pass the message and jump to the next page
+                            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
+                            toLogging.putExtra("successMsg", SuccessMsg);
+                            startActivity(toLogging);
+                            // Log.d("success","success! move on to the next screen");
+
+                            // login failed
+                        }, throwable -> {
+                            // get the error message from backend
+                            String errorMsg = throwable.getMessage();
+                            ErrorMsgDialogFragment dialog = new ErrorMsgDialogFragment();
+                            // handle the error message
+                            switch (errorMsg) {
+                                case "Account not found.":
+                                    errorMsg = "Incorrect/Unregistered email or incorrect password";
+                                    break;
+                                case "Unable to resolve host \"webservices.sagebridge.org\": No address associated with hostname":
+                                    errorMsg = "Internet Error, please check your internet connection";
+                                    break;
+                                default:
+                                    errorMsg = "Unknown Error";
+                            }
+                            // use setArguments to pass the error message to the dialog
+                            Bundle args = new Bundle();
+                            args.putString("msgName", errorMsg);
+                            dialog.setArguments(args);
+                            // show the dialog to the user
+                            dialog.show(getSupportFragmentManager(), "errorMsg");
+//                            Log.d("login error", errorMsg);
+                        } );
     }
 
     //the valid email pattern, which refers to

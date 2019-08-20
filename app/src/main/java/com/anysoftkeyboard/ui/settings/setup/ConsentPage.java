@@ -11,27 +11,25 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.anysoftkeyboard.ui.settings.MainSettingsActivity;
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
+import com.menny.android.anysoftkeyboard.BiAffect.bridge.BiAffectBridge;
 
 public class ConsentPage extends AppCompatActivity {
     WebView webView;
-    SharedPreferences spref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO: Solve the auto login bug
-//        spref = getSharedPreferences("login",MODE_PRIVATE);
-//        Boolean logined = spref.getBoolean("logined", false);
-//        if (logined) {
-//            String message = "You've successfully logged in";
-//            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-//            toast.setGravity(Gravity.CENTER, 0, 0);
-//            toast.show();
-//            Intent toLogging = new Intent(ConsentPage.this, LoggingPage.class);
-//            startActivity(toLogging);
+        // use the Bridge sdk to check if the user already logged in, if so skip the login page
+        if (BiAffectBridge.getInstance().isUserLoggedIn()) {
+            String loggedInMsg = "You've already logged in";
+            // already logged in, use intent to pass the message and jump to the next page
+            Intent toLogging = new Intent(ConsentPage.this, MainSettingsActivity.class);
+            toLogging.putExtra("LoggedInMsg", loggedInMsg);
+            startActivity(toLogging);
 //            Log.d("test", "logined in");
-//        }
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consent_page);
@@ -41,6 +39,7 @@ public class ConsentPage extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("file:///android_asset/" + "consent_full.html");
 
+        // Agree button
         final Button agree_button = (Button) findViewById(R.id.btn_agree);
         agree_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +49,7 @@ public class ConsentPage extends AppCompatActivity {
             }
         });
 
+        // Cancel button
         final Button exit_button = (Button) findViewById(R.id.btn_exit);
         exit_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +61,7 @@ public class ConsentPage extends AppCompatActivity {
             }
         });
 
+        // Disagree button
         final Button disagree_button = (Button) findViewById(R.id.btn_disagree);
         disagree_button.setOnClickListener(new View.OnClickListener() {
             @Override
