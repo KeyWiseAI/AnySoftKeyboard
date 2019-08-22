@@ -484,6 +484,7 @@ public class CandidateView extends View implements ThemeableChild {
 
                         // save autosuggestion touchtype data
                         final int index = MotionEventCompat.getActionIndex(me);
+                        // for autosuggestion ,currently saving actiondown time as eventDownTime
                         long eventDownTime;
                         int pointerId;
                         HashMap<Integer, Long> idToDownTimeMap = new HashMap<>();

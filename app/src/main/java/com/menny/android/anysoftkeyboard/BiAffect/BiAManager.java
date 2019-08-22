@@ -282,6 +282,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Punctuations (.?!,:;-[]{}()'")
         // Symbols (emojis etc)
 
+//        Log.d("code", keyCode + "");
         // Alpha-Numeric
         if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 97 && keyCode <= 122)) {
             keyType = new String("Alpha-Numeric");
@@ -292,9 +293,14 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Backspace
         } else if (keyCode == -5) {
             keyType = new String("Backspace");
+        // switch to Numbers
+        } else if (keyCode == -2) {
+            keyType = new String("switchToNumber");
+        // switch to Letters
+        } else if (keyCode == - 99) {
+            keyType = new String("switchToLetter");
         // Punctuations (.?!,:;-[]{}()'")
-        }
-        else if ((keyCode >= 33 && keyCode <= 34) || (keyCode >= 39 && keyCode <= 41) || (keyCode >= 44 && keyCode <= 46) || (keyCode >= 58 && keyCode <= 59)
+        } else if ((keyCode >= 33 && keyCode <= 34) || (keyCode >= 39 && keyCode <= 41) || (keyCode >= 44 && keyCode <= 46) || (keyCode >= 58 && keyCode <= 59)
                 || keyCode == 63 || keyCode == 91 || keyCode == 93 || keyCode == 123 || keyCode == 125) {
             keyType = new String("Punctuations");
         }
