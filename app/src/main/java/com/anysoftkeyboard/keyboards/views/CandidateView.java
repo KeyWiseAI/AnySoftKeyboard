@@ -459,6 +459,7 @@ public class CandidateView extends View implements ThemeableChild {
         final int y = (int) me.getY();
         mTouchX = x;
 
+
         switch (action) {
             case MotionEvent.ACTION_MOVE:
                 // Fling up!?
@@ -489,7 +490,8 @@ public class CandidateView extends View implements ThemeableChild {
                         int pointerId;
                         HashMap<Integer, Long> idToDownTimeMap = new HashMap<>();
                         pointerId = me.getPointerId(index);
-                        idToDownTimeMap.put(pointerId,me.getEventTime());
+                        // Using getDownTime() to get time of EVENT_DOWN as eventDownTime for research
+                        idToDownTimeMap.put(pointerId,me.getDownTime());
                         eventDownTime = idToDownTimeMap.get(pointerId);
                         BiAManager.getInstance(AnyApplication.getAppContext()).addMasterEntry(eventDownTime, me.getEventTime(), action, me.getPressure(index),
                                 me.getX(index), me.getY(index), me.getTouchMajor(index), me.getTouchMinor(index), me.getPointerCount());
