@@ -33,6 +33,7 @@ android {
     defaultConfig {
         applicationId 'com.menny.android.anysoftkeyboard'
         minSdkVersion 19
+        multiDexEnabled true
         versionCode versionData.versionCode
         versionName versionData.versionName
 
