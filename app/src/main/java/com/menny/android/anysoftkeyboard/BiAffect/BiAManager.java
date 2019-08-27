@@ -279,6 +279,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         // Alpha-Numeric
         // Space
         // Backspace
+        // switchToNumber
+        // switchToLetter
         // Punctuations (.?!,:;-[]{}()'")
         // Symbols (emojis etc)
 
