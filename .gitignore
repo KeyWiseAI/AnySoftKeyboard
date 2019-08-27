@@ -13,3 +13,4 @@ local.properties
 .classpath
 .vscode/
 NDK_14b/
+.cxx/
