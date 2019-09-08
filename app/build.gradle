@@ -9,14 +9,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.github.menny:GradleVersion:0.0.3'
+        classpath 'net.evendanan.autoversion:gradle-plugin:0.1.7'
+//        classpath 'com.github.menny:GradleVersion:0.0.3'
         //classpath 'com.android.tools.build:gradle:3.3.0'
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
-apply plugin: 'net.evendanan.versiongenerator'
+apply plugin: 'net.evendanan.autoversion'
 
 def generators = [
         new net.evendanan.versiongenerator.generators.EnvBuildVersionGenerator.CircleCi(
@@ -127,14 +128,8 @@ dependencies {
     implementation project(':overlay')
     implementation project(':pixel')
 
-    implementation 'com.github.Sage-Bionetworks.BridgeAndroidSDK:android-sdk:02dfcdb', {
-        exclude group: 'joda-time', module: 'joda-time'
-    }
-    implementation 'org.sagebionetworks.bridge:rest-client:0.16.14', {
-        exclude group: 'joda-time', module: 'joda-time'
-    }
-    implementation 'org.sagebionetworks:BridgeDataUploadUtils:0.2.6', {
-        exclude group: 'joda-time', module: 'joda-time'
+    implementation('org.sagebionetworks.bridge:android-sdk:0.2.0') {
+        exclude group: 'com.google.code.findbugs'
     }
 
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
