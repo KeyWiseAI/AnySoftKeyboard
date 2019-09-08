@@ -1,6 +1,5 @@
 package com.menny.android.anysoftkeyboard.BiAffect.bridge;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -35,32 +34,10 @@ public class BiAffectBridge {
     }
 
     /**
-     * Temporary method to repeat the given boolean for testing purposes
-     * @deprecated Replace with isUserLoggedIn()
-     * @param loggedIn Boolean to return
-     * @return the given loggedIn parameter
-     */
-    public boolean isUserLoggedIn( boolean loggedIn ) {
-        return loggedIn;
-    }
-
-    /**
      * Checks to see if user is considered logged in or not.
      */
     public boolean isUserLoggedIn() {
         return null != BridgeManagerProvider.getInstance().getAuthenticationManager().getUserSessionInfo();
-    }
-
-    /**
-     * Temporary method to emulate log in functionality.
-     * @deprecated replace with Single logIn( email, password )
-     * @return true if password is only digits, false otherwise.
-     */
-    public boolean login( String username, String password ) {
-        if( TextUtils.isDigitsOnly( password ) ) {
-            return true;
-        }
-        return false;
     }
 
     /**
