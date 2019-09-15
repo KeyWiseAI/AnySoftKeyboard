@@ -34,4 +34,7 @@ public interface Device_DAO {
     //It gives an error if no field names match.
     @Query("SELECT id FROM DeviceData")
     int[] getAllIds();
+
+    @Query( "SELECT * FROM DeviceData LIMIT 1" )
+    DeviceData getDeviceData();
 }

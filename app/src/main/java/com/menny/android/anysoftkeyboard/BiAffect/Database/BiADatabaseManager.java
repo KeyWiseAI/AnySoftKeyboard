@@ -166,6 +166,15 @@ BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterf
             // do nothing
         }}
 
+    /**
+     * Gets the singleton device data for this device.
+     *
+     * @return The singleton DeviceData for this device
+     */
+    public DeviceData getDeviceData() {
+        return mDatabaseInstance.mDevice_dao().getDeviceData();
+    }
+
     //api exposed for Device Data
     @Override
     public void insertDeviceData(Context c){
