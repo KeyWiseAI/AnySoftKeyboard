@@ -3,9 +3,11 @@ package com.menny.android.anysoftkeyboard.BiAffect.Database.DAO;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
+import android.arch.persistence.room.Query;
 
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.TouchTypeData;
 
+import java.util.List;
 
 // DAO includes methods that offer abstract access to your app's database.
 @Dao
@@ -20,4 +22,7 @@ public interface Touch_DAO {
     // No error is returned when the IGNORE conflict resolution algorithm is used.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertSingleTouchDataEntry(TouchTypeData data);
+
+    @Query( "SELECT * FROM touchtypedata WHERE eventDownTime >= (:start) AND eventDownTime <= (:end)" )
+    List<TouchTypeData> getTouchTypeData( long start, long end );
 }

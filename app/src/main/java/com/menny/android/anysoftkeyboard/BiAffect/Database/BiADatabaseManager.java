@@ -87,6 +87,17 @@ BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterf
         }
     }
 
+    /**
+     * Gets a list of TouchTypeData that occurred between the start and end times.
+     *
+     * @param start epoch representing the earliest TouchTypeData returned
+     * @param end epoch representing the latest TouchTypeData returned
+     * @return List of TouchTypeData between the start and end times
+     */
+    public List<TouchTypeData> getTouchTypeData( long start, long end ) {
+        return mDatabaseInstance.mTouch_dao().getTouchTypeData( start, end );
+    }
+
     //exposed Api for touch data
     @Override
     public void insertTouchData(long eventDownTime, long eventTime, String eventAction, float pressure, float x_cord, float y_cord, float majorAxis, float minorAxis){
