@@ -115,6 +115,17 @@ BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterf
         }
     }
 
+    /**
+     * Gets a list of KeyTypeData that occurred between the start and end times.
+     *
+     * @param start epoch representing the earliest KeyTypeData returned
+     * @param end   epoch representing the latest KeyTypeData returned
+     * @return List of KeyTypeData between the start and end times
+     */
+    public List<KeyTypeData> getKeyTypeData( long start, long end ) {
+        return mDatabaseInstance.mKey_dao().getKeyTypeData( start, end );
+    }
+
     //exposed api for keydata
     @Override
     public void insertKeyData(long keyDownTime, String keyCode, float centre_X, float centre_Y, float width, float height){

@@ -3,9 +3,11 @@ package com.menny.android.anysoftkeyboard.BiAffect.Database.DAO;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
+import android.arch.persistence.room.Query;
 
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.KeyTypeData;
 
+import java.util.List;
 
 // DAO includes methods that offer abstract access to your app's database.
 @Dao
@@ -22,4 +24,7 @@ public interface Key_DAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertSingleKeyData(KeyTypeData data);
+
+    @Query( "SELECT * FROM keytypedata WHERE keyDownTime_id >= (:start) AND keyDownTime_id <= (:end)" )
+    List<KeyTypeData> getKeyTypeData( long start, long end );
 }
