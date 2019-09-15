@@ -4,8 +4,6 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
-import android.util.Log;
-
 
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.AccelerometerData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.DeviceData;
@@ -13,6 +11,7 @@ import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.KeyTypeData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.SessionData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.TouchTypeData;
 
+import java.util.List;
 
 // All data processing work handeled here
 // calls to room DB and CRUD operations are called from here
@@ -141,6 +140,17 @@ BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterf
             //do nothing
             //Log.i("BiAffect", "Exception caught in insertKeyData at "+keyDownTime+ "\n");
         }
+    }
+
+    /**
+     * Gets a list of AccelerometerData that occurred between the start and end times.
+     *
+     * @param start epoch representing the earliest AccelerometerData returned
+     * @param end   epoch representing the latest AccelerometerData returned
+     * @return List of AccelerometerData between the start and end times
+     */
+    public List<AccelerometerData> getAccelerometerData( long start, long end ) {
+        return mDatabaseInstance.mAccelerometer_dao().getAccelerometerData( start, end );
     }
 
     //accelerometer exposed apis

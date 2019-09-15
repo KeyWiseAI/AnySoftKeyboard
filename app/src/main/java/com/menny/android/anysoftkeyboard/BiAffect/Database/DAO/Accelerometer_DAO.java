@@ -3,9 +3,11 @@ package com.menny.android.anysoftkeyboard.BiAffect.Database.DAO;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
+import android.arch.persistence.room.Query;
 
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.AccelerometerData;
 
+import java.util.List;
 
 // DAO includes methods that offer abstract access to your app's database.
 @Dao
@@ -20,4 +22,7 @@ public interface Accelerometer_DAO {
     // No error is returned when the IGNORE conflict resolution algorithm is used.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAccelerometerData(AccelerometerData data);
+
+    @Query( "SELECT * FROM accelerometerdata WHERE time >= (:start) AND time <= (:end)" )
+    List<AccelerometerData> getAccelerometerData( long start, long end );
 }
