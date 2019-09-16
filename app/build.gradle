@@ -132,6 +132,17 @@ dependencies {
         exclude group: 'com.google.code.findbugs'
     }
 
+    //https://developer.android.com/jetpack/androidx/releases/work#declaring_dependencies
+    def work_version = "1.0.1"
+    implementation("android.arch.work:work-runtime:$work_version") {
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+    implementation("android.arch.work:work-rxjava2:$work_version") {
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+
+    implementation 'com.github.akarnokd:rxjava2-interop:0.13.2'
+
     implementation "com.anysoftkeyboard.api:api:$AnySoftKeyboardApiVersion"
     implementation "com.android.support:support-fragment:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
