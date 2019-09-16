@@ -1,20 +1,15 @@
 package com.menny.android.anysoftkeyboard.BiAffect.bridge;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
-
-import org.joda.time.DateTime;
-import org.sagebionetworks.bridge.android.BridgeConfig;
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
-import org.sagebionetworks.bridge.data.Archive;
-import org.sagebionetworks.bridge.data.JsonArchiveFile;
 import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
 
-import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import rx.Single;
-import rx.functions.Action0;
 
 /**
  * Utility class to help manage the connection between BiAffect data and the Sage Bridge SDK
@@ -35,54 +30,52 @@ public class BiAffectBridge {
 
     /**
      * Checks to see if user is considered logged in or not.
+     * Sets up Session uploads if the user is logged in.
      */
     public boolean isUserLoggedIn() {
-        return null != BridgeManagerProvider.getInstance().getAuthenticationManager().getUserSessionInfo();
+        boolean loggedIn = (null != BridgeManagerProvider.getInstance().getAuthenticationManager().getUserSessionInfo());
+        if( loggedIn ) {
+            setUpWorkManager();
+        }
+        return loggedIn;
+    }
+
+    /**
+     * Sets up WorkManager so queued uploads will be processed:
+     * once a day
+     * when the device is on an unmetered connection
+     * when the device is charging
+     * when the device is idle
+     */
+    private void setUpWorkManager() {
+        WorkManager.getInstance().cancelAllWork();
+        Constraints constraints = new Constraints.Builder().setRequiredNetworkType( NetworkType.UNMETERED )
+                                                           .setRequiresCharging( true )
+                                                           .setRequiresDeviceIdle( true )
+                                                           .build();
+
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder( BridgeWorker.class,
+                                                                       1,
+                                                                       TimeUnit.DAYS )
+                                          .setConstraints( constraints )
+                                          .build();
+
+        WorkManager.getInstance().enqueue( request );
     }
 
     /**
      * Logs the user in to the Bridge Study Manager.
-     * @param email Email that the user signed up with
+     * Successful login will also set up Session uploads.
+     *
+     * @param email    Email that the user signed up with
      * @param password Password that the user signed up with
      * @return A Single that can be subscribed to for updates.
      */
     public Single<UserSessionInfo> logIn( String email, String password ) {
-        return BridgeManagerProvider.getInstance().getAuthenticationManager().signIn( email, password );
-    }
-
-
-    public void upload() {
-        String json = new Gson().toJson( new Session() );
-
-
-        //this is found in upload schemas under upload&export
-        // TODO: 8/15/2019 Figure out what exactly the endDate is.
-        JsonArchiveFile file = new JsonArchiveFile("Session.json", DateTime.now(), json);
-        Archive.Builder builder = Archive.Builder.forActivity( "KeyboardSession" );
-        builder.addDataFile( file );
-
-        BridgeConfig config = BridgeManagerProvider.getInstance().getBridgeConfig();
-        String appVersionString = String.format(Locale.ENGLISH, "version %s, build %d",
-                config.getAppVersionName(),
-                config.getAppVersion());
-        builder.withAppVersionName(appVersionString);
-        builder.withPhoneInfo(config.getDeviceName());
-        Archive archive = builder.build();
-
-        BridgeManagerProvider.getInstance().getUploadManager().queueUpload( "UUID filename", archive ).subscribe( success -> {
-            BridgeManagerProvider.getInstance().getUploadManager().processUploadFiles().subscribe(new Action0() {
-                @Override
-                public void call() {
-                    Log.wtf("asf", "i'm complete??");
-                }
-            }, error -> {
-                Log.wtf( "asdf", error);
-            });
-        }, error -> {
-            Log.wtf("asdf", error.getMessage());
-        });
-
-        //Call this only when ready to upload files (maybe with work manager)
+        return BridgeManagerProvider.getInstance()
+                                    .getAuthenticationManager()
+                                    .signIn( email, password )
+                                    .doOnSuccess( __ -> setUpWorkManager() );
     }
 
 }
