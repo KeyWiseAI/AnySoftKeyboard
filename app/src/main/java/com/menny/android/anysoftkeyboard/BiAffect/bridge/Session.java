@@ -4,8 +4,6 @@ import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.AccelerometerD
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.KeyTypeData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.TouchTypeData;
 
-import org.joda.time.DateTime;
-
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -15,7 +13,7 @@ import io.reactivex.Observable;
  */
 public class Session {
     private double              duration;
-    private DateTime            timestamp;
+    private long                timestamp;
     private List<Keylogs>       keylogs;
     private List<Accelerations> accelerations;
 
@@ -23,11 +21,11 @@ public class Session {
      * Basic constructor for this class that initializes the required time-related parameters
      *
      * @param start epoch representing the start of the Session
-     * @param end epoch representing the end of the Session
+     * @param end   epoch representing the end of the Session
      */
     public Session( long start, long end ) {
         duration = end - start;
-        timestamp = new DateTime( start );
+        timestamp = start;
     }
 
     /**
