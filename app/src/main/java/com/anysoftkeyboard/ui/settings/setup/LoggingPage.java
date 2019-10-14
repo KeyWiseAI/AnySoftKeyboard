@@ -1,34 +1,32 @@
 package com.anysoftkeyboard.ui.settings.setup;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import java.lang.String;
 
 import com.menny.android.anysoftkeyboard.BiAffect.bridge.BiAffectBridge;
 import com.menny.android.anysoftkeyboard.LauncherSettingsActivity;
 import com.menny.android.anysoftkeyboard.R;
+
+import org.sagebionetworks.bridge.rest.exceptions.ConsentRequiredException;
 import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
-import rx.Single;
 
 import java.util.regex.Pattern;
 
-import static android.util.Patterns.EMAIL_ADDRESS;
+import rx.Subscription;
 
 public class LoggingPage extends AppCompatActivity {
+    private String _email, _password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -94,44 +92,56 @@ public class LoggingPage extends AppCompatActivity {
 
     // sign in function
     private void signIn(String email, String password) {
-
+        _email = email;
+        _password = password;
         // Use Bridge to login
-        BiAffectBridge.getInstance()
-                .logIn( email, password )
-                .subscribe(
-                        // login successfully
-                        userSessionInfo -> {
-                            String SuccessMsg = "You've successfully logged in";
-                            // login successfully, use intent to pass the message and jump to the next page
-                            Intent toLogging = new Intent(LoggingPage.this, LauncherSettingsActivity.class);
-                            toLogging.putExtra("successMsg", SuccessMsg);
-                            startActivity(toLogging);
-                            // Log.d("success","success! move on to the next screen");
+        Subscription s = BiAffectBridge.getInstance()
+                                       .logIn( email, password )
+                                       .subscribe( this::onSignInSuccess, this::onSignInError );
+    }
 
-                            // login failed
-                        }, throwable -> {
-                            // get the error message from backend
-                            String errorMsg = throwable.getMessage();
-                            ErrorMsgDialogFragment dialog = new ErrorMsgDialogFragment();
-                            // handle the error message
-                            switch (errorMsg) {
-                                case "Account not found.":
-                                    errorMsg = "Incorrect/Unregistered email or incorrect password";
-                                    break;
-                                case "Unable to resolve host \"webservices.sagebridge.org\": No address associated with hostname":
-                                    errorMsg = "Internet Error, please check your internet connection";
-                                    break;
-                                default:
-                                    errorMsg = "Unknown Error";
-                            }
-                            // use setArguments to pass the error message to the dialog
-                            Bundle args = new Bundle();
-                            args.putString("msgName", errorMsg);
-                            dialog.setArguments(args);
-                            // show the dialog to the user
-                            dialog.show(getSupportFragmentManager(), "errorMsg");
+    private void onSignInSuccess( UserSessionInfo __ ) {
+        String SuccessMsg = "You've successfully logged in";
+        // login successfully, use intent to pass the message and jump to the next page
+        Intent toLogging = new Intent( LoggingPage.this, LauncherSettingsActivity.class );
+        toLogging.putExtra( "successMsg", SuccessMsg );
+        startActivity( toLogging );
+        // Log.d("success","success! move on to the next screen");
+    }
+
+    private void onSignInError( Throwable throwable ) {
+        if( throwable instanceof ConsentRequiredException ) {
+            UserSessionInfo session = ((ConsentRequiredException)throwable).getSession();
+            Subscription s = BiAffectBridge.getInstance()
+                                           .bypassConsent( session )
+                                           .subscribe( (__) -> signIn( _email, _password ),
+                                                       (error) -> onSignInError( new Throwable( "consent" ) ) );
+            return;
+        }
+        // get the error message from backend
+        String errorMsg = throwable.getMessage();
+        ErrorMsgDialogFragment dialog = new ErrorMsgDialogFragment();
+        // handle the error message
+        switch (errorMsg) {
+            case "Account not found.":
+                errorMsg = "Incorrect/Unregistered email or incorrect password";
+                break;
+            case "Unable to resolve host \"webservices.sagebridge.org\": No address associated with hostname":
+                errorMsg = "Internet Error, please check your internet connection";
+                break;
+            case "consent":
+                errorMsg = "Consent error";
+                break;
+            default:
+                errorMsg = "Unknown Error";
+        }
+        // use setArguments to pass the error message to the dialog
+        Bundle args = new Bundle();
+        args.putString("msgName", errorMsg);
+        dialog.setArguments(args);
+        // show the dialog to the user
+        dialog.show(getSupportFragmentManager(), "errorMsg");
 //                            Log.d("login error", errorMsg);
-                        } );
     }
 
     //the valid email pattern, which refers to

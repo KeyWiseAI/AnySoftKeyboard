@@ -1,8 +1,10 @@
 package com.menny.android.anysoftkeyboard.BiAffect.bridge;
 
 import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
+import org.sagebionetworks.bridge.rest.model.ConsentStatus;
 import org.sagebionetworks.bridge.rest.model.UserSessionInfo;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import androidx.work.Constraints;
@@ -76,6 +78,33 @@ public class BiAffectBridge {
                                     .getAuthenticationManager()
                                     .signIn( email, password )
                                     .doOnSuccess( __ -> setUpWorkManager() );
+    }
+
+    /**
+     * Attempts to bypass the consent step to help facilitate onboarding.
+     *
+     * @param userSessionInfo UserSessionInfo to get the required consents from
+     * @return A Single whose success represents a successful bypass
+     */
+    public Single<UserSessionInfo> bypassConsent( UserSessionInfo userSessionInfo ) {
+        Map<String, ConsentStatus> consents = userSessionInfo.getConsentStatuses();
+        for( String guid : consents.keySet() ) {
+            ConsentStatus consent = consents.get( guid );
+            if( null == consent ) {
+                continue;
+            }
+            if( consent.isRequired() && !consent.isConsented() ) {
+                return BridgeManagerProvider.getInstance()
+                                            .getAuthenticationManager()
+                                            .giveConsent( guid,
+                                                          userSessionInfo.getFirstName() + " " + userSessionInfo.getLastName(),
+                                                          null,
+                                                          null,
+                                                          null,
+                                                          userSessionInfo.getSharingScope() );
+            }
+        }
+        return null;
     }
 
 }
