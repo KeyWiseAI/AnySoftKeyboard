@@ -1,5 +1,9 @@
 package com.menny.android.anysoftkeyboard.BiAffect;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -20,6 +24,9 @@ import java.util.Locale;
 import rx.Subscription;
 
 public class Finaliser implements Runnable {
+
+    private static String _appVersion;
+    private static String _phoneInfo;
 
     long startTime;
     long endTime;
@@ -128,18 +135,41 @@ public class Finaliser implements Runnable {
                                                   new DateTime( endTime ),
                                                   new Gson().toJson( session ) ) );
 
-        DeviceData deviceData = mBiADatabaseManager.getDeviceData();
-        String appVersionString = String.format( Locale.ENGLISH,
-                                                 "%s %s %s dp %s, dpi %s, w %s, h %s",
-                                                 deviceData.manufacturer,
-                                                 deviceData.phoneModel,
-                                                 deviceData.androidVersion,
-                                                 deviceData.pixelDensityLogical,
-                                                 deviceData.pixelDensityDpi,
-                                                 deviceData.deviceWidthPixel,
-                                                 deviceData.deviceHeightPixel );
-        builder.withAppVersionName( appVersionString );
-        builder.withPhoneInfo( BridgeManagerProvider.getInstance().getBridgeConfig().getDeviceName() );
+        if( TextUtils.isEmpty( _appVersion ) ) {
+            try {
+                Context context = BridgeManagerProvider.getInstance().getApplicationContext();
+                PackageInfo info = context.getPackageManager()
+                                          .getPackageInfo( context.getPackageName(),
+                                                           0 );
+                _appVersion = String.format( Locale.ENGLISH,
+                                             "%s(%d)",
+                                             info.versionName,
+                                             info.versionCode );
+            } catch( PackageManager.NameNotFoundException ignore ) {
+            } finally {
+                if( TextUtils.isEmpty( _appVersion ) ) {
+                    builder.withAppVersionName( "Unknown" );
+                } else {
+                    builder.withAppVersionName( _appVersion );
+                }
+            }
+        } else {
+            builder.withAppVersionName( _appVersion );
+        }
+
+        if( TextUtils.isEmpty( _phoneInfo ) ) {
+            DeviceData deviceData = mBiADatabaseManager.getDeviceData();
+            _phoneInfo = String.format( Locale.ENGLISH,
+                                        "%s %s %s|dp:%s dpi:%s w:%s h:%s",
+                                        deviceData.manufacturer,
+                                        deviceData.phoneModel,
+                                        deviceData.androidVersion,
+                                        deviceData.pixelDensityLogical,
+                                        deviceData.pixelDensityDpi,
+                                        deviceData.deviceWidthPixel,
+                                        deviceData.deviceHeightPixel );
+        }
+        builder.withPhoneInfo( _phoneInfo );
 
         return BridgeManagerProvider.getInstance()
                                     .getUploadManager()
