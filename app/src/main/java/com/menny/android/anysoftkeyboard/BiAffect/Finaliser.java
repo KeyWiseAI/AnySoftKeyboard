@@ -5,6 +5,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.BiADatabaseManager;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.DeviceData;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.KeyTypeData;
+import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.TouchTypeData;
 import com.menny.android.anysoftkeyboard.BiAffect.bridge.Session;
 
 import org.joda.time.DateTime;
@@ -12,6 +14,7 @@ import org.sagebionetworks.bridge.android.manager.BridgeManagerProvider;
 import org.sagebionetworks.bridge.data.Archive;
 import org.sagebionetworks.bridge.data.JsonArchiveFile;
 
+import java.util.List;
 import java.util.Locale;
 
 import rx.Subscription;
@@ -111,8 +114,14 @@ public class Finaliser implements Runnable {
 
         session.addAccelerometerData( mBiADatabaseManager.getAccelerometerData( startTime, endTime ) );
 
-        session.addKeyTypeData( mBiADatabaseManager.getKeyTypeData( startTime, endTime ) );
-        session.addTouchTypeData( mBiADatabaseManager.getTouchTypeData( startTime, endTime ) );
+        List<KeyTypeData> keys = mBiADatabaseManager.getKeyTypeData( startTime, endTime );
+        for( KeyTypeData key : keys ) {
+            Session.Keylog keylog = new Session.Keylog( key);
+            for( TouchTypeData touch : mBiADatabaseManager.getTouchTypeData( key.keyDownTime_id ) ) {
+                keylog.addTouch( touch );
+            }
+            session.addKeylog( keylog );
+        }
 
         Archive.Builder builder = Archive.Builder.forActivity( "KeyboardSession" );
         builder.addDataFile( new JsonArchiveFile( "Session.json",

@@ -4,6 +4,7 @@ import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.AccelerometerD
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.KeyTypeData;
 import com.menny.android.anysoftkeyboard.BiAffect.Database.Models.TouchTypeData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -14,7 +15,7 @@ import io.reactivex.Observable;
 public class Session {
     private double              duration;
     private long                timestamp;
-    private List<Keylogs>       keylogs;
+    private List<Keylog>        keylogs = new ArrayList<>();
     private List<Accelerations> accelerations;
 
     /**
@@ -41,43 +42,79 @@ public class Session {
     }
 
     /**
-     * Adds the correct Keylogs data from the KeyTypeData from the DB
-     *
-     * @param keyTypeData List of KeyTypeData associated with this Session
+     * Adds the Keylog object to the Session
      */
-    public void addKeyTypeData( List<KeyTypeData> keyTypeData ) {
-        keylogs = Observable.fromIterable( keyTypeData )
-                            .map( Keylogs::new )
-                            .toList()
-                            .blockingGet();
+    public void addKeylog( Keylog keylog ) {
+        keylogs.add( keylog );
     }
 
     /**
-     * Adds the correct Keylogs data from the TouchTypeData from the DB
-     *
-     * @param touchTypeData List of TouchTypeData associated with this Session
+     * Class to represent an entire key (KeyTypeData), along with associated touches (TouchTypeData)
+     * <p>
+     * This maps to Keylogs in the scheme
      */
-    public void addTouchTypeData( List<TouchTypeData> touchTypeData ) {
-        keylogs = Observable.merge( Observable.fromIterable( keylogs ),
-                                    Observable.fromIterable( touchTypeData )
-                                              .map( Keylogs::new ) )
-                            .toList()
-                            .blockingGet();
-    }
+    public static class Keylog {
+        private long        timestamp; //timestamp of first touch event
+        private String      keyTypeCode; //from key type data
+        private List<Touch> touches = new ArrayList<>();
 
-    /**
-     * Class that maps to Keylogs in the scheme, but contains both KeyTypeData and TouchTypeData
-     */
-    private static class Keylogs {
-        private KeyTypeData   keyTypeData;
-        private TouchTypeData touchTypeData;
+        //transient to not be serialized in JSON
+        //used to calculate distances
+        private transient float centerX;
+        private transient float centerY;
+        private transient float width;
+        private transient float height;
 
-        private Keylogs( KeyTypeData keyTypeData ) {
-            this.keyTypeData = keyTypeData;
+        private static transient float previousX = 0;
+        private static transient float previousY = 0;
+
+        private static class Touch {
+            private long   timestamp;
+            private String action;
+            private float  force;
+            private double distanceFromCenter;
+            private double distanceFromPrevious;
+            private float  touch_majorAxis;
+            private float  touch_minorAxis;
+
+            private Touch( TouchTypeData origin ) {
+                timestamp = origin.eventActionTime;
+                action = origin.eventAction;
+                force = origin.force;
+                touch_majorAxis = origin.touch_majorAxis;
+                touch_minorAxis = origin.touch_minorAxis;
+            }
         }
 
-        private Keylogs( TouchTypeData touchTypeData ) {
-            this.touchTypeData = touchTypeData;
+        /**
+         * Creates a new Keylog object from the origin KeyTypeData object
+         */
+        public Keylog( KeyTypeData origin ) {
+            timestamp = origin.keyDownTime_id;
+            keyTypeCode = origin.keyTypeCode;
+            centerX = origin.keyCentre_X;
+            centerY = origin.keyCentre_Y;
+            width = origin.key_Width;
+            height = origin.key_Height;
+        }
+
+        /**
+         * Creates a new Touch object from the origin TouchTypeData object
+         * <p>
+         * Also calculates the distanceFromCenter and distanceFromPrevious fields
+         */
+        public void addTouch( TouchTypeData origin ) {
+            Touch touch = new Touch( origin );
+
+            touch.distanceFromCenter = Math.hypot( origin.touch_xcord - centerX,
+                                                   origin.touch_ycord - centerY );
+
+            touch.distanceFromPrevious = Math.hypot( origin.touch_xcord - previousX,
+                                                     origin.touch_ycord - previousY );
+
+            touches.add( touch );
+            previousX = origin.touch_xcord;
+            previousY = origin.touch_ycord;
         }
     }
 

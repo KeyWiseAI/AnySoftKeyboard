@@ -88,14 +88,13 @@ BiADBInterface.SessionDataInterface,BiADBInterface.AccelerometerData,BiADBInterf
     }
 
     /**
-     * Gets a list of TouchTypeData that occurred between the start and end times.
+     * Gets a list of TouchTypeData associated with a particular keyDownTime.
      *
-     * @param start epoch representing the earliest TouchTypeData returned
-     * @param end epoch representing the latest TouchTypeData returned
-     * @return List of TouchTypeData between the start and end times
+     * @param time epoch representing the keyDownTime "foreign key"
+     * @return List of TouchTypeData associated with the given keyDownTime
      */
-    public List<TouchTypeData> getTouchTypeData( long start, long end ) {
-        return mDatabaseInstance.mTouch_dao().getTouchTypeData( start, end );
+    public List<TouchTypeData> getTouchTypeData( long time ) {
+        return mDatabaseInstance.mTouch_dao().getTouchTypeData( time );
     }
 
     //exposed Api for touch data

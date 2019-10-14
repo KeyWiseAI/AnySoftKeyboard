@@ -23,6 +23,6 @@ public interface Touch_DAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertSingleTouchDataEntry(TouchTypeData data);
 
-    @Query( "SELECT * FROM touchtypedata WHERE eventDownTime >= (:start) AND eventDownTime <= (:end)" )
-    List<TouchTypeData> getTouchTypeData( long start, long end );
+    @Query( "SELECT * FROM touchtypedata WHERE eventDownTime == (:time)" )
+    List<TouchTypeData> getTouchTypeData( long time );
 }
