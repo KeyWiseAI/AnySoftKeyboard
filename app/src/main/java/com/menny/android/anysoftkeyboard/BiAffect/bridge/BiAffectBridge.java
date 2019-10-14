@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import rx.Single;
@@ -105,6 +106,12 @@ public class BiAffectBridge {
             }
         }
         return null;
+    }
+
+    public void singleUpload() {
+        WorkManager.getInstance().cancelAllWork();
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder( BridgeWorker.class ).build();
+        WorkManager.getInstance().enqueue( request );
     }
 
 }
