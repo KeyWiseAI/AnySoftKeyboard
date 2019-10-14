@@ -50,10 +50,12 @@ public class MainSettingsActivity extends BasicAnyActivity {
         mTitle = getTitle();
 
         Bundle extras = getIntent().getExtras();
-        String message = extras.getString("LoggedInMsg");
-        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        if( null != extras ) {
+            String message = extras.getString( "LoggedInMsg" );
+            Toast  toast   = Toast.makeText( getApplicationContext(), message, Toast.LENGTH_SHORT );
+            toast.setGravity( Gravity.CENTER, 0, 0 );
+            toast.show();
+        }
 
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
