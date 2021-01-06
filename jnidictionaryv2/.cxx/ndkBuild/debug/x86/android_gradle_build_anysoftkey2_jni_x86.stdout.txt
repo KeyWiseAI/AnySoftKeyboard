@@ -1,0 +1,4 @@
+[x86] Compile++      : anysoftkey2_jni <= char_utils.cpp
+[x86] Compile++      : anysoftkey2_jni <= com_anysoftkeyboard_dictionaries_ResourceBinaryDictionary.cpp
+[x86] Compile++      : anysoftkey2_jni <= dictionary.cpp
+[x86] SharedLibrary  : libanysoftkey2_jni.so

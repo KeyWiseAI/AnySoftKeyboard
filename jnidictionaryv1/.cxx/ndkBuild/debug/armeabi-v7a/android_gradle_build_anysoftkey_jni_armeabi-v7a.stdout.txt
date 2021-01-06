@@ -1,0 +1,3 @@
+[armeabi-v7a] Compile++ thumb: anysoftkey_jni <= com_anysoftkeyboard_dictionaries_BinaryDictionary.cpp
+[armeabi-v7a] Compile++ thumb: anysoftkey_jni <= dictionary.cpp
+[armeabi-v7a] SharedLibrary  : libanysoftkey_jni.so

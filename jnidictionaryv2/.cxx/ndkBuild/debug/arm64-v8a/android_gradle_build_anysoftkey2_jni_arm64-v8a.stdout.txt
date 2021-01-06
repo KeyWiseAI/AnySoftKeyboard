@@ -1,0 +1,4 @@
+[arm64-v8a] Compile++      : anysoftkey2_jni <= char_utils.cpp
+[arm64-v8a] Compile++      : anysoftkey2_jni <= com_anysoftkeyboard_dictionaries_ResourceBinaryDictionary.cpp
+[arm64-v8a] Compile++      : anysoftkey2_jni <= dictionary.cpp
+[arm64-v8a] SharedLibrary  : libanysoftkey2_jni.so
