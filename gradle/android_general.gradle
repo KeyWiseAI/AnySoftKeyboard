@@ -16,6 +16,7 @@ android {
     defaultConfig {
         minSdkVersion sdkMinimumVersion
         targetSdkVersion sdkTargetVersion
+        multiDexEnabled true
     }
 
     compileOptions {
