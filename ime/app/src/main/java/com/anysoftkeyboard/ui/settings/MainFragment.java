@@ -48,6 +48,8 @@ import com.anysoftkeyboard.ui.tutorials.ChangeLogFragment;
 import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.BuildConfig;
 import com.menny.android.anysoftkeyboard.R;
+
+import com.biaffect.bridge.BiAffectBridge;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.disposables.CompositeDisposable;
@@ -165,9 +167,16 @@ public class MainFragment extends Fragment {
         FragmentChauffeurActivity activity = (FragmentChauffeurActivity) getActivity();
         switch (item.getItemId()) {
             case R.id.about_menu_option:
-                activity.addFragmentToUi(
-                        new AboutAnySoftKeyboardFragment(),
-                        TransitionExperiences.DEEPER_EXPERIENCE_TRANSITION);
+                //the following code changes the about button to upload captured data.
+                //used to force upload in case the automatic upload functionality is not working.
+                ///begin single upload bypass
+                Toast.makeText( getContext(), "Initiating single upload", Toast.LENGTH_SHORT ).show();
+                BiAffectBridge.singleUpload();
+                ///end single upload bypass
+                //uncomment the following lines to restore original about button functionality
+//                activity.addFragmentToUi(
+//                        new AboutAnySoftKeyboardFragment(),
+//                        TransitionExperiences.DEEPER_EXPERIENCE_TRANSITION);
                 return true;
             case R.id.tweaks_menu_option:
                 activity.addFragmentToUi(
