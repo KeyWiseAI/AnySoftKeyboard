@@ -36,7 +36,6 @@
         android:installLocation="internalOnly"
         android:label="@string/ime_name"
         android:restoreAnyVersion="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.AskApp"
         tools:replace="android:label"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
@@ -70,7 +69,6 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
             android:launchMode="singleTop"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -86,7 +84,6 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
             android:launchMode="singleTask"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskApp"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -94,7 +91,6 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
             android:launchMode="singleTask"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskApp.NoTitle.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
 
@@ -104,21 +100,18 @@
             android:label="@string/testers_version"
             android:launchMode="singleTop"
             android:noHistory="true"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskApp.Popup" />
         <!-- ui when a crash happens -->
         <activity
             android:name="com.anysoftkeyboard.ui.SendBugReportUiActivity"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskApp.NoTitle" />
 
         <activity
             android:name="com.anysoftkeyboard.ui.VoiceInputNotInstalledActivity"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <!-- File explorer only when android version < 4.4 -->
@@ -126,14 +119,12 @@
             android:name="com.anysoftkeyboard.ui.FileExplorerCreate"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskFileExplorer" />
 
         <activity
             android:name="com.anysoftkeyboard.ui.FileExplorerRestore"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/Theme.AskFileExplorer" />
     </application>
 
