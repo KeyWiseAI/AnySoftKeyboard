@@ -40,6 +40,33 @@
         tools:replace="android:label"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
+        <activity
+            android:name="com.biaffect.ui.LoggingPage"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/ime_name"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AskApp.NoTitle.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.biaffect.ui.SignupPage"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/ime_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AskApp.NoTitle.NoActionBar">
+        </activity>
+        <activity
+            android:name="com.biaffect.ui.PostSignupPage"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/ime_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AskApp.NoTitle.NoActionBar">
+        </activity>
+
         <!-- used to backup the settings and SQL to the cloud -->
         <!--
         <meta-data
@@ -68,13 +95,13 @@
             android:name="com.menny.android.anysoftkeyboard.LauncherSettingsActivity"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/ime_name"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.AskApp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
