@@ -59,32 +59,12 @@ public class GesturesSettingsFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        findPreference(getString(R.string.settings_key_gesture_typing))
-                .setOnPreferenceChangeListener(
-                        (preference, newValue) -> {
-                            final boolean gestureTypingEnabled = (boolean) newValue;
-                            if (gestureTypingEnabled) {
-                                mGeneralDialogController.showDialog(1);
-                            }
-                            for (Preference affectedPref : getAffectedPrefs()) {
-                                affectedPref.setEnabled(!gestureTypingEnabled);
-                            }
-                            return true;
-                        });
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         MainSettingsActivity.setActivityTitle(
                 this, getString(R.string.unicode_gestures_quick_text_key_name));
 
-        final boolean gestureTypingEnabled =
-                ((CheckBoxPreference)
-                                findPreference(getString(R.string.settings_key_gesture_typing)))
-                        .isChecked();
+        final boolean gestureTypingEnabled = false;
         for (Preference affectedPref : getAffectedPrefs()) {
             affectedPref.setEnabled(!gestureTypingEnabled);
         }

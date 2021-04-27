@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AnySoftKeyboardWithGestureTyping extends AnySoftKeyboardWithQuickText {
 
-    private boolean mGestureTypingEnabled;
+    private final boolean mGestureTypingEnabled = false;
     protected final Map<String, GestureTypingDetector> mGestureTypingDetectors = new HashMap<>();
     @Nullable private GestureTypingDetector mCurrentGestureDetector;
     private boolean mDetectorReady = false;
@@ -65,7 +65,7 @@ public abstract class AnySoftKeyboardWithGestureTyping extends AnySoftKeyboardWi
                                 })
                         .subscribe(
                                 enabled -> {
-                                    mGestureTypingEnabled = enabled;
+//                                    mGestureTypingEnabled = enabled;
                                     mDetectorStateSubscription.dispose();
                                     if (!mGestureTypingEnabled) {
                                         destroyAllDetectors();
