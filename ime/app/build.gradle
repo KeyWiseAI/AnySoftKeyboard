@@ -122,4 +122,8 @@ dependencies {
             allAddOnsImplementation it
         }
     }
+
+    implementation('org.sagebionetworks.bridge:android-sdk:0.2.0') {
+        exclude group: 'com.google.code.findbugs'
+    }
 }

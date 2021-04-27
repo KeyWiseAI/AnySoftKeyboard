@@ -38,6 +38,7 @@
         android:restoreAnyVersion="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.AskApp"
+        tools:replace="android:label"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <!-- used to backup the settings and SQL to the cloud -->

@@ -40,6 +40,8 @@ allprojects {
         jcenter()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         maven { url "https://jitpack.io" }
+        maven { url 'http://repo-maven.sagebridge.org/' }
+        maven { url 'https://dl.bintray.com/sage-bionetworks/bridge-maven-release' }
     }
 }
 
