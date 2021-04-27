@@ -19,11 +19,16 @@ package com.anysoftkeyboard.keyboards.views;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import com.anysoftkeyboard.keyboards.AnyKeyboard.AnyKey;
 import com.anysoftkeyboard.keyboards.Keyboard;
 import com.anysoftkeyboard.keyboards.views.AnyKeyboardViewBase.KeyPressTimingHandler;
+import com.menny.android.anysoftkeyboard.AnyApplication;
+
 import java.util.Locale;
+
+import com.biaffect.BiAManager;
 
 class PointerTracker {
     static class SharedPointerTrackersData {
@@ -246,6 +251,18 @@ class PointerTracker {
         mKeyAlreadyProcessed = false;
         mIsRepeatableKey = false;
         mKeyCodesInPathLength = -1;
+        //BiAffect Code Key Probe Start
+        Keyboard.Key temp = getKey( keyIndex );
+        if( null != temp ) {
+            BiAManager.getInstance( AnyApplication.getAppContext() )
+                      .addKeyDataOnlyDownTime( eventTime,
+                                               temp.getPrimaryCode(),
+                                               temp.centerX,
+                                               temp.centerY,
+                                               temp.width,
+                                               temp.height );
+        }
+        //BiAffect Code Key Probe End
         checkMultiTap(eventTime, keyIndex);
         if (mListener != null && isValidKeyIndex(keyIndex)) {
             AnyKey key = (AnyKey) mKeys[keyIndex];

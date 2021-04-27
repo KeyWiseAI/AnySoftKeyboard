@@ -28,6 +28,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -46,13 +47,17 @@ import com.anysoftkeyboard.rx.GenericOnError;
 import com.anysoftkeyboard.theme.KeyboardTheme;
 import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.R;
+
+import com.biaffect.BiAManager;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class CandidateView extends View implements ThemeableChild {
+    private final int[] totallength = new int[MAX_SUGGESTIONS];
 
     private static final String TAG = "ASKCandidateView";
 
@@ -315,6 +320,12 @@ public class CandidateView extends View implements ThemeableChild {
                 mWordWidth[i] = wordWidth;
             }
 
+            if( i == 0 ) {
+                totallength[i] = wordWidth;
+            } else {
+                totallength[i] = totallength[i-1] + wordWidth;
+            }
+
             mWordX[i] = x;
 
             if (touchX != OUT_OF_BOUNDS_X_CORD
@@ -505,6 +516,44 @@ public class CandidateView extends View implements ThemeableChild {
                             mService.addWordToDictionary(word.toString());
                         }
                     } else if (!mNoticing) {
+                        // we only save data when user select word from autosuggestion
+                        //since the word is saved only when Action_up is fired.
+                        //We only put our probe here, not both Action_up and Action_down.
+
+                        // save autosuggestion touchtype data
+                        final int index = MotionEventCompat.getActionIndex( me);
+                        // for autosuggestion ,currently saving actiondown time as eventDownTime
+                        long eventDownTime;
+                        int pointerId;
+                        HashMap<Integer, Long> idToDownTimeMap = new HashMap<>();
+                        pointerId = me.getPointerId(index);
+                        // Using getDownTime() to get time of EVENT_DOWN as eventDownTime for research
+                        idToDownTimeMap.put(pointerId,me.getDownTime());
+                        eventDownTime = idToDownTimeMap.get(pointerId);
+                        BiAManager.getInstance( AnyApplication.getAppContext())
+                                  .addMasterEntry( eventDownTime,
+                                                   me.getEventTime(),
+                                                   action,
+                                                   me.getPressure( index),
+                                                   me.getX(index),
+                                                   me.getY(index),
+                                                   me.getTouchMajor(index),
+                                                   me.getTouchMinor(index),
+                                                   me.getPointerCount() );
+
+                        // save autosuggestion keytype data
+                        float keyCentre_X = totallength[mSelectedIndex] - mWordWidth[mSelectedIndex]/2;
+                        float keyCentre_Y = getTop() + getHeight()/2;
+                        float keyWidth = mWordWidth[mSelectedIndex];
+                        float keyHeight = getHeight();
+
+                        BiAManager.getInstance(AnyApplication.getAppContext())
+                                  .addKeyDataOnlyAuto( eventDownTime,
+                                                       keyCentre_X,
+                                                       keyCentre_Y,
+                                                       keyWidth,
+                                                       keyHeight );
+
                         mService.pickSuggestionManually(mSelectedIndex, mSelectedString);
                     } else if (mSelectedIndex == 1 && !TextUtils.isEmpty(mJustAddedWord)) {
                         // 1 is the index of "Remove?"

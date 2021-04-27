@@ -56,6 +56,9 @@ import com.anysoftkeyboard.saywhat.Notices;
 import com.anysoftkeyboard.saywhat.PublicNotice;
 import com.anysoftkeyboard.theme.KeyboardThemeFactory;
 import com.anysoftkeyboard.ui.tutorials.TutorialsProvider;
+
+import org.sagebionetworks.bridge.android.BridgeApplication;
+
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -67,7 +70,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AnyApplication extends Application {
+public class AnyApplication extends BridgeApplication {
+    private static Context appContext;
+    public static Context getAppContext() {
+        return appContext;
+    }
 
     private static final String TAG = "ASKApp";
 
@@ -204,6 +211,7 @@ public class AnyApplication extends Application {
 
         mPublicNotices = new ArrayList<>(EasterEggs.create());
         mPublicNotices.addAll(Notices.create(this));
+        appContext = getApplicationContext();
     }
 
     public List<PublicNotice> getPublicNotices() {

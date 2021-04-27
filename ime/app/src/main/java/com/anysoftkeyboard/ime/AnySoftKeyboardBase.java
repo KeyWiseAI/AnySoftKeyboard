@@ -21,6 +21,7 @@ import android.inputmethodservice.InputMethodService;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,8 @@ import com.anysoftkeyboard.utils.ModifierKeyState;
 import com.menny.android.anysoftkeyboard.AnyApplication;
 import com.menny.android.anysoftkeyboard.BuildConfig;
 import com.menny.android.anysoftkeyboard.R;
+
+import com.biaffect.BiAManager;
 import io.reactivex.disposables.CompositeDisposable;
 import java.util.List;
 
@@ -263,6 +266,12 @@ public abstract class AnySoftKeyboardBase extends InputMethodService
         mInputSessionDisposables.dispose();
         if (getInputView() != null) getInputView().onViewNotRequired();
         mInputView = null;
+
+        if(!BiAManager.getInstance( AnyApplication.getAppContext()).endSession()){
+            Log.i( "BiAffect", "End Session Failed in destroy");
+        }else{
+            Log.i("BiAffect", "End Session Successfull in destroy");
+        }
 
         super.onDestroy();
     }

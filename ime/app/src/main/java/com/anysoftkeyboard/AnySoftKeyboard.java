@@ -18,6 +18,7 @@ package com.anysoftkeyboard;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.IBinder;
@@ -68,8 +69,11 @@ import java.util.List;
 import java.util.Locale;
 import net.evendanan.pixel.GeneralDialogController;
 
+import com.biaffect.BiAManager;
+
 /** Input method implementation for QWERTY-ish keyboard. */
 public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
+    SharedPreferences spref;
 
     private final PackagesChangedReceiver mPackagesChangedReceiver =
             new PackagesChangedReceiver(this);
@@ -132,6 +136,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
     @Override
     public void onCreate() {
         super.onCreate();
+        spref = getSharedPreferences( "login", MODE_PRIVATE );
         mOrientation = getResources().getConfiguration().orientation;
         if (!BuildConfig.DEBUG && DeveloperUtils.hasTracingRequested(getApplicationContext())) {
             try {
@@ -261,6 +266,12 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
                     .show();
         }
 
+        if(!BiAManager.getInstance( AnyApplication.getAppContext()).endSession()){
+            Log.i("BiAffect", "End Session Failed in hideWindow");
+        }else{
+            Log.i("BiAffect", "End Session Successfull in hideWindow");
+        }
+
         super.onDestroy();
     }
 
@@ -278,6 +289,12 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
                 attribute.imeOptions,
                 attribute.inputType,
                 restarting);
+
+        if(!BiAManager.getInstance(AnyApplication.getAppContext()).startSession()){
+            Log.i("BiAffect", "Start Session Failed");
+        }else{
+            Log.i("BiAffect", "Start Session Successfull");
+        }
 
         super.onStartInputView(attribute, restarting);
 
@@ -1174,6 +1191,8 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
         super.onWindowHidden();
 
         abortCorrectionAndResetPredictionState(true);
+        // solve the problem of saving data when user close the keyboard
+        BiAManager.getInstance(AnyApplication.getAppContext()).endSession();
     }
 
     private void nextAlterKeyboard(EditorInfo currentEditorInfo) {
@@ -1388,6 +1407,11 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        if(!BiAManager.getInstance(AnyApplication.getAppContext()).endSession()){
+            Log.i("BiAffect", "End Session Failed");
+        }else{
+            Log.i("BiAffect", "End Session Successfull/ CONFIGUARTION");
+        }
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation != mOrientation) {
             mOrientation = newConfig.orientation;
