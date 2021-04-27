@@ -32,16 +32,6 @@ public class DebugAnyApplication extends AnyApplication {
     protected void setupCrashHandler(SharedPreferences sp) {
         super.setupCrashHandler(sp);
         Logger.setLogProvider(new LogCatLogProvider());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            StrictMode.setThreadPolicy(
-                    new StrictMode.ThreadPolicy.Builder()
-                            .detectAll()
-                            .penaltyLog()
-                            .penaltyFlashScreen()
-                            .build());
-            StrictMode.setVmPolicy(
-                    new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
-        }
     }
 
     @Override
