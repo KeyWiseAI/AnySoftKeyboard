@@ -26,6 +26,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
@@ -259,6 +260,7 @@ public class AnyKeyboardView extends AnyKeyboardViewWithExtraDraw
             return super.onTouchEvent(me);
         }
 
+        Log.e( "remote debug", "biaffecttouchdataprobe from anykeyboardview.java/ontouchevent" );
         biAffectTouchDataProbe(me);
 
         final int action = MotionEventCompat.getActionMasked(me);

@@ -266,6 +266,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
                     .show();
         }
 
+        Log.e( "remote debug", "end session from anysoftkeyboard.java/ondestroy" );
         if(!BiAManager.getInstance( AnyApplication.getAppContext()).endSession()){
             Log.i("BiAffect", "End Session Failed in hideWindow");
         }else{
@@ -290,6 +291,7 @@ public abstract class AnySoftKeyboard extends AnySoftKeyboardColorizeNavBar {
                 attribute.inputType,
                 restarting);
 
+        Log.e( "remote debug", "startsession from anysoftkeyboard.java/onstartinputview" );
         if(!BiAManager.getInstance(AnyApplication.getAppContext()).startSession()){
             Log.i("BiAffect", "Start Session Failed");
         }else{

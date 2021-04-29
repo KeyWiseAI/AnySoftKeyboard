@@ -252,6 +252,7 @@ class PointerTracker {
         mIsRepeatableKey = false;
         mKeyCodesInPathLength = -1;
         //BiAffect Code Key Probe Start
+        Log.e( "remote debug", "add key data only down time from pointertracker.java/ondownevent" );
         Keyboard.Key temp = getKey( keyIndex );
         if( null != temp ) {
             BiAManager.getInstance( AnyApplication.getAppContext() )
