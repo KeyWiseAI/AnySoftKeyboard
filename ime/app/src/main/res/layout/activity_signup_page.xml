@@ -107,7 +107,7 @@
 
             <RadioButton
                 android:id="@+id/share_biaffect"
-                android:text="No. Only use my coded study data for BiAffect research."
+                android:text="No. Only use my coded study data for KeyWise research."
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

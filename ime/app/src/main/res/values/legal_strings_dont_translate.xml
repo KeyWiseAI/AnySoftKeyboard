@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation">
-    <string name="ime_name">BiAffect</string>
+    <string name="ime_name">KeyWise</string>
     <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -11,7 +11,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="check_email">In order to finalize your registration, you must verify your email address. Please go to your email account and click on the link in an email that was sent to you from BiAffect with the subject \'Verify your account\'. The email address we sent this to is: %s \n
+    <string name="check_email">In order to finalize your registration, you must verify your email address. Please go to your email account and click on the link in an email that was sent to you from KeyWise with the subject \'Verify your account\'. The email address we sent this to is: %s \n
         \nIf you do not see an email in your inbox, please check your spam folder or we can resend your verification by tapping the button below.\n
         \nOnce verified, tap Next.
     </string>
