@@ -167,8 +167,9 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         Log.i("CS_BiAffect_Sess","-----------END SESSION START-------------");
         Log.i("CS_BiAffect_Sess",Log.getStackTraceString(new Exception()));
         this.sessionRunning = false;
+        long sessionStartTime = currentRunningSession;
         long sessionEndTime = System.currentTimeMillis();
-        Thread temp = new Thread(new Finaliser( this.currentRunningSession, sessionEndTime, mBiADatabaseManager));
+        Thread temp = new Thread(new Finaliser( sessionStartTime, sessionEndTime, mBiADatabaseManager));
         temp.start();
         Log.i("CS_BiAffect_Sess","-----------END SESSION END-------------");
         return true;
