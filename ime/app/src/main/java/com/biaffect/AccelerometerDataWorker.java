@@ -7,6 +7,9 @@ public class AccelerometerDataWorker implements Runnable {
     BiADatabaseManager mBiADatabaseManager;
     final int FREQUENCY = 10;
     final int oneSecondMillis = 1000;
+
+    public boolean stop;
+
     public AccelerometerDataWorker(BiADatabaseManager databaseManager){
         super();
         sharedInstance = BiAManager.getInstance( null);
@@ -15,7 +18,7 @@ public class AccelerometerDataWorker implements Runnable {
 
     @Override
     public void run() {
-        while(sharedInstance.sessionRunning){
+        while(!stop){
             long currentTime = System.currentTimeMillis();
             mBiADatabaseManager.insertAccelerometerData( currentTime,
                                                          sharedInstance.current_accelerometer_x,

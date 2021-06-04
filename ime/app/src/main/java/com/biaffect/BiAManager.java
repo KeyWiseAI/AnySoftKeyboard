@@ -55,6 +55,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     long upTimeAtBirth;
     long offset;
 
+    AccelerometerDataWorker accelerometerThread;
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
@@ -147,7 +149,8 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
         this.currentRunningSession = System.currentTimeMillis();
         Log.i("CS_BiAffect_Sess","startTime -> "+currentRunningSession);
 
-        Thread accelerometerDataCollector = new Thread(new AccelerometerDataWorker(mBiADatabaseManager));
+        accelerometerThread = new AccelerometerDataWorker(mBiADatabaseManager);
+        Thread accelerometerDataCollector = new Thread(accelerometerThread);
         accelerometerDataCollector.start();
 
         Thread temp = new Thread(new Runnable() {
@@ -164,6 +167,9 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     @Override
     public boolean endSession(){
         if(!this.sessionRunning) return false;
+        if( null != accelerometerThread ) {
+            accelerometerThread.stop = true;
+        }
         Log.i("CS_BiAffect_Sess","-----------END SESSION START-------------");
         Log.i("CS_BiAffect_Sess",Log.getStackTraceString(new Exception()));
         this.sessionRunning = false;
