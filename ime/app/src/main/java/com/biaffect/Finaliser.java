@@ -152,6 +152,11 @@ public class Finaliser implements Runnable {
      * @return Subscription that needs to be referenced by uploadSubscription in order to support unsubscribing
      */
     private Subscription upload() {
+        List<KeyTypeData> keys = mBiADatabaseManager.getKeyTypeData( startTime, endTime );
+        if( keys.size() < 1 ) {
+            return null;
+        }
+
         Session session = new Session( startTime, endTime );
 
         try { //we want to wait for 100ms because that's the delay for AccelerometerDataWorker logic.
@@ -160,7 +165,6 @@ public class Finaliser implements Runnable {
 
         session.addAccelerometerData( mBiADatabaseManager.getAccelerometerData( startTime, endTime ) );
 
-        List<KeyTypeData> keys = mBiADatabaseManager.getKeyTypeData( startTime, endTime );
         for( KeyTypeData key : keys ) {
             Session.Keylog keylog = new Session.Keylog( key);
             for( TouchTypeData touch : BiADatabaseManager.getTouchTypeData( key.keyDownTime_id ) ) {
