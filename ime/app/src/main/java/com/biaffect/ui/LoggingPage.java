@@ -53,20 +53,8 @@ public class LoggingPage extends AppCompatActivity {
         EditText email_edText = (EditText) findViewById(R.id.input_email);
         EditText password_edText = (EditText) findViewById(R.id.input_password);
 
-        findViewById( R.id.btn_signup ).setOnClickListener( __ -> {
-                                                                Pattern DIACRITICS_AND_FRIENDS
-                                                                        = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
-                                                                String str = "łñ";
-                                                                Log.wtf("before", str);
-                                                                str = Normalizer.normalize( str, Normalizer.Form.NFD);
-                                                                Log.wtf("normalize", str);
-                                                                Log.wtf( "char array?",
-                                                                         Arrays.toString(str.toCharArray() ) );
-                                                                str = DIACRITICS_AND_FRIENDS.matcher(str).replaceAll("");
-                                                                Log.wtf("remove", str);
-                                                            }
-
-            //startActivity( new Intent( this, SignupPage.class ) )
+        findViewById( R.id.btn_signup ).setOnClickListener( __ ->
+            startActivity( new Intent( this, SignupPage.class ) )
         );
 
         final Button button = (Button) findViewById(R.id.btn_login);
