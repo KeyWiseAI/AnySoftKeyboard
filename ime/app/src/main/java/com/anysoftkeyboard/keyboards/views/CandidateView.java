@@ -34,7 +34,6 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -517,7 +516,6 @@ public class CandidateView extends View implements ThemeableChild {
                             mService.addWordToDictionary(word.toString());
                         }
                     } else if (!mNoticing) {
-                        Log.e( "remote debug", "adding master entry from candidateview.java" );
                         // we only save data when user select word from autosuggestion
                         //since the word is saved only when Action_up is fired.
                         //We only put our probe here, not both Action_up and Action_down.

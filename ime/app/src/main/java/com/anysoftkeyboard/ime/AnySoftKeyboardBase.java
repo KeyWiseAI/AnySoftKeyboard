@@ -267,7 +267,6 @@ public abstract class AnySoftKeyboardBase extends InputMethodService
         if (getInputView() != null) getInputView().onViewNotRequired();
         mInputView = null;
 
-        Log.e( "remote debug", "end session from anysoftkeyboardbase.java/ondestroy" );
         if(!BiAManager.getInstance( AnyApplication.getAppContext()).endSession()){
             Log.i( "BiAffect", "End Session Failed in destroy");
         }else{

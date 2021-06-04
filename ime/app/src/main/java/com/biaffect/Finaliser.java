@@ -161,13 +161,11 @@ public class Finaliser implements Runnable {
         session.addAccelerometerData( mBiADatabaseManager.getAccelerometerData( startTime, endTime ) );
 
         List<KeyTypeData> keys = mBiADatabaseManager.getKeyTypeData( startTime, endTime );
-        Log.e( "remote debug", "key type data size: " + keys.size() );
         for( KeyTypeData key : keys ) {
             Session.Keylog keylog = new Session.Keylog( key);
             for( TouchTypeData touch : BiADatabaseManager.getTouchTypeData( key.keyDownTime_id ) ) {
                 keylog.addTouch( touch );
             }
-            Log.e( "remote debug", "keylog keytypecode: " + key.keyTypeCode );
             session.addKeylog( keylog );
         }
 
