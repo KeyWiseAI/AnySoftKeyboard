@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public interface Key_DAO {
     @Insert( onConflict = OnConflictStrategy.IGNORE )
     void insertSingleKeyData( KeyTypeData data );
 
+    @Transaction
     @Query( "SELECT * FROM keytypedata WHERE keyDownTime_id >= (:start) AND keyDownTime_id <= (:end)" )
     List<KeyTypeData> getKeyTypeData( long start, long end );
 }
