@@ -90,7 +90,6 @@ public class Finaliser implements Runnable {
             }
         mBiADatabaseManager.updateSessionData(startTime,endTime);
 
-            uploadSubscription = upload();
 
         }catch (InterruptedException e){
 
@@ -104,6 +103,7 @@ public class Finaliser implements Runnable {
             Log.i("CS_BiAffect_E_T","-----------FINALISER END-------------");
 
         }
+        uploadSubscription = upload();
     }
 
     /**
