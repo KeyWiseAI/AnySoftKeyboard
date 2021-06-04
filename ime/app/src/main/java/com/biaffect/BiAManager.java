@@ -50,9 +50,6 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     //Database
     BiADatabaseManager mBiADatabaseManager;
 
-    //TIME OFFSETS
-    long birthTime;
-    long upTimeAtBirth;
     long offset;
 
     AccelerometerDataWorker accelerometerThread;
@@ -74,9 +71,6 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     private static BiAManager shared_instance = null;
 
     private BiAManager(Context context){
-        this.birthTime = System.currentTimeMillis();
-        this.upTimeAtBirth = SystemClock.uptimeMillis();
-        this.offset = birthTime - upTimeAtBirth;
 
         this.mContext = context;
         //This will initialise the dbManager when the constructor of BiAManager is called...
@@ -140,6 +134,7 @@ public class BiAManager implements BiADataProcessorInterface.TouchDataProcessorI
     //Session specific calls
     @Override
     public boolean startSession(){
+        offset = System.currentTimeMillis() - SystemClock.uptimeMillis();
         endSession();
         //check once.. I dont think the event time is stored as milli sec
         Log.i("CS_BiAffect_Sess","-----------Start SESSION START-------------");
