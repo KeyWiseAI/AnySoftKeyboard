@@ -25,6 +25,10 @@ public final class BiADatabaseManager implements BiADBInterface.TouchDataInterfa
     private static BiADatabaseManager sharedInstance;
     private static BiAffect_Database  mDatabaseInstance;
 
+    public static void runInTransaction( Runnable run ) {
+        mDatabaseInstance.runInTransaction( run );
+    }
+
     // made BiADatabaseManager Singleton. Only one Instance is available throughout execution and shared by everyone.
     public static synchronized BiADatabaseManager getInstance( Context appContext ) {
         if(sharedInstance==null){

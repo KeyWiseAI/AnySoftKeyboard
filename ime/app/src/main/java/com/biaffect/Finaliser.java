@@ -25,6 +25,8 @@ import rx.Subscription;
 
 public class Finaliser implements Runnable {
 
+    private boolean _insertsDone = false;
+
     private static String _appVersion;
     private static String _phoneInfo;
 
@@ -57,6 +59,8 @@ public class Finaliser implements Runnable {
             int max = BiAManager.KEY_BUFFER_SIZE > BiAManager.TOUCH_BUFFER_SIZE ?
                       BiAManager.KEY_BUFFER_SIZE : BiAManager.TOUCH_BUFFER_SIZE;
 
+            BiADatabaseManager.runInTransaction( () -> {
+                synchronized( this ) {
             for(int i=0; i<max; i++){
                 if( i < BiAManager.KEY_BUFFER_SIZE ){
                     if(sharedInstance.k1[i].used){
@@ -88,8 +92,18 @@ public class Finaliser implements Runnable {
                     }
                 }
             }
+                    _insertsDone = true;
+                    notifyAll();
+                }
         mBiADatabaseManager.updateSessionData(startTime,endTime);
 
+            } );
+
+            while( !_insertsDone ) {
+                synchronized( this ) {
+                    wait();
+                }
+            }
 
         }catch (InterruptedException e){
 
