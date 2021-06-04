@@ -61,41 +61,65 @@ public class Finaliser implements Runnable {
 
             BiADatabaseManager.runInTransaction( () -> {
                 synchronized( this ) {
-            for(int i=0; i<max; i++){
-                if( i < BiAManager.KEY_BUFFER_SIZE ){
-                    if(sharedInstance.k1[i].used){
-                        KeyDataPOJO k = sharedInstance.k1[i];
-                        mBiADatabaseManager.insertKeyData(k.eventDownTime, k.keyType, k.keyCentre_X, k.keyCentre_Y, k.keyWidth, k.keyHeight);
-                        k.markUnused();
-                        count++;
-                    }
-                    if(sharedInstance.k2[i].used){
-                        KeyDataPOJO k = sharedInstance.k2[i];
-                        mBiADatabaseManager.insertKeyData(k.eventDownTime, k.keyType, k.keyCentre_X, k.keyCentre_Y, k.keyWidth, k.keyHeight);
-                        k.markUnused();
-                        count++;
-                    }
-                }
+                    for( int i = 0; i < max; i++ ) {
+                        if( i < BiAManager.KEY_BUFFER_SIZE ) {
+                            if( sharedInstance.k1[i].used ) {
+                                KeyDataPOJO k = sharedInstance.k1[i];
+                                mBiADatabaseManager.insertKeyData( k.eventDownTime,
+                                                                   k.keyType,
+                                                                   k.keyCentre_X,
+                                                                   k.keyCentre_Y,
+                                                                   k.keyWidth,
+                                                                   k.keyHeight );
+                                k.markUnused();
+                                count++;
+                            }
+                            if( sharedInstance.k2[i].used ) {
+                                KeyDataPOJO k = sharedInstance.k2[i];
+                                mBiADatabaseManager.insertKeyData( k.eventDownTime,
+                                                                   k.keyType,
+                                                                   k.keyCentre_X,
+                                                                   k.keyCentre_Y,
+                                                                   k.keyWidth,
+                                                                   k.keyHeight );
+                                k.markUnused();
+                                count++;
+                            }
+                        }
 
-                if( i < BiAManager.TOUCH_BUFFER_SIZE ){
-                    if(sharedInstance.t1[i].used){
-                        TouchDataPOJO data = sharedInstance.t1[i];
-                        mBiADatabaseManager.insertTouchData(data.eventDownTime, data.eventTime, data.eventAction, data.pressure, data.x_cord, data.y_cord, data.major_axis, data.minor_axis);
-                        data.markUnused();
-                        count++;
+                        if( i < BiAManager.TOUCH_BUFFER_SIZE ) {
+                            if( sharedInstance.t1[i].used ) {
+                                TouchDataPOJO data = sharedInstance.t1[i];
+                                mBiADatabaseManager.insertTouchData( data.eventDownTime,
+                                                                     data.eventTime,
+                                                                     data.eventAction,
+                                                                     data.pressure,
+                                                                     data.x_cord,
+                                                                     data.y_cord,
+                                                                     data.major_axis,
+                                                                     data.minor_axis );
+                                data.markUnused();
+                                count++;
+                            }
+                            if( sharedInstance.t2[i].used ) {
+                                TouchDataPOJO data = sharedInstance.t2[i];
+                                mBiADatabaseManager.insertTouchData( data.eventDownTime,
+                                                                     data.eventTime,
+                                                                     data.eventAction,
+                                                                     data.pressure,
+                                                                     data.x_cord,
+                                                                     data.y_cord,
+                                                                     data.major_axis,
+                                                                     data.minor_axis );
+                                data.markUnused();
+                                count++;
+                            }
+                        }
                     }
-                    if(sharedInstance.t2[i].used){
-                        TouchDataPOJO data = sharedInstance.t2[i];
-                        mBiADatabaseManager.insertTouchData(data.eventDownTime, data.eventTime, data.eventAction, data.pressure, data.x_cord, data.y_cord, data.major_axis, data.minor_axis);
-                        data.markUnused();
-                        count++;
-                    }
-                }
-            }
                     _insertsDone = true;
                     notifyAll();
                 }
-        mBiADatabaseManager.updateSessionData(startTime,endTime);
+                mBiADatabaseManager.updateSessionData( startTime, endTime );
 
             } );
 
